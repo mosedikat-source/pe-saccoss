@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - P. E. SACCOS LTD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{background:#0f172a;color:#fff;min-height:100vh;display:flex}
+.sidebar{width:250px;background:#020617;padding:18px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.brand-logo{width:42px;height:42px;flex-shrink:0}
+.brand-name{font-weight:800;font-size:15px}.brand-email{color:#64748b;font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge-admin{background:#14532d;border:1px solid #22c55e;color:#22c55e;font-size:11px;padding:2px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.menu-title{color:#475569;font-size:12px;margin:18px 0 8px;letter-spacing:.5px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#94a3b8;text-decoration:none;font-size:14px;cursor:pointer;position:relative}
+.menu-item.active{background:#1e293b;color:#fff}
+.menu-item:hover{background:#1a2332;color:#fff}
+.menu-item .count{position:absolute;right:12px;background:#f59e0b;color:#000;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+.loan-badge{margin-left:auto;width:24px;height:24px;min-width:24px;background:#f59e0b;color:#000;font-weight:800;font-size:12px;border-radius:50%;display:none;align-items:center;justify-content:center;flex-shrink:0}
+.main{flex:1;padding:20px;overflow:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.topbar .icons{display:flex;gap:16px;align-items:center;font-size:20px;cursor:pointer}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.card{background:#1e293b;border:1px solid #2d3a52;border-radius:14px;padding:18px;margin-bottom:16px}
+.icon-box{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}
+.blue{background:rgba(59,130,246,.15)} .green{background:rgba(34,197,94,.15)} .yellow{background:rgba(234,179,8,.15)} .emerald{background:rgba(16,185,129,.15)}
+.card-num{font-size:28px;font-weight:800}.card-label{color:#94a3b8;font-size:13px;margin-top:4px}
+.pending{background:#422006;border-color:#7c4d12}
+.trans-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #334155}
+.trans-row:last-child{border:none}
+.btn-approve{background:#22c55e;border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn-reject{background:#ef4444;border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+canvas{width:100%;height:260px;display:block}
+@media(max-width:900px){.sidebar{display:none}.cards{grid-template-columns:1fr 1fr}.main{padding:14px}}
+@media(max-width:520px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="sidebar" class="sidebar">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 100 100"><circle cx="50" cy="50" r="12" fill="#0f172a"/><g><circle cx="50" cy="12" r="8" fill="#f97316"/><path d="M35 35 Q50 28 65 35 L60 55 Q50 48 40 55 Z" fill="#f97316"/></g><g><circle cx="85" cy="32" r="8" fill="#3b82f6"/><path d="M70 45 Q80 30 88 35 L78 58 Q70 52 62 48 Z" fill="#3b82f6"/></g><g><circle cx="78" cy="72" r="8" fill="#a21caf"/><path d="M60 62 Q78 62 82 72 L60 82 Q58 72 52 66 Z" fill="#a21caf"/></g><g><circle cx="35" cy="82" r="8" fill="#22c55e"/><path d="M48 66 Q42 78 28 78 L35 58 Q45 60 52 62 Z" fill="#22c55e"/></g><g><circle cx="12" cy="38" r="8" fill="#f59e0b"/><path d="M28 42 Q18 35 15 28 L38 28 Q38 40 35 48 Z" fill="#f59e0b"/></g></svg>
+    <div>
+      <div class="brand-name">P. E. SACCOS LTD</div>
+      <div style="display:flex;gap:6px;align-items:center"><span class="brand-email">mosedikat@gmail.com</span><span class="badge-admin">🛡️ admin</span></div>
+    </div>
+  </div>
+<div class="menu-title">Menu</div>
+<a href="/dashboard.html" class="menu-item active">🏠 Dashboard</a>
+<a href="/staff-dashboard.html" class="menu-item">👥 Staff Dashboard</a>
+<a href="/members.html" class="menu-item">👤 Members</a>
+<a href="savings.html" class="menu-item">🐷 Savings</a>
+<a href="loans.html" class="menu-item">🏦 Loans <span id="loanBadge" class="loan-badge">0</span></a>
+<a href="/loan-products.html" class="menu-item">📦 Loan Products</a>
+<a href="/loan-calculator.html" class="menu-item">🧮 Loan Calculator</a>
+<a href="/dividends.html" class="menu-item">💵 Dividends</a>
+<a href="/reports.html" class="menu-item">📊 Reports</a>
+<div class="menu-title">System</div>
+<a href="/repayment-audit.html" class="menu-item">📝 Repayment Audit</a>
+<a href="/settings.html" class="menu-item">⚙️ Settings</a>
+  <div style="margin-top:40px">
+    <a href="/" onclick="localStorage.clear()" class="menu-item">↪️ Logout</a>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <div><h2 style="font-size:28px;font-weight:800">Dashboard</h2><div style="color:#94a3b8;font-size:13px;margin-top:2px">Overview of P. E. SACCOS LTD performance</div></div>
+    <div class="icons"><span onclick="location.href='/settings.html'">🔧</span><span style="position:relative" onclick="location.href='/notifications.html'">🔔<span id="topBellCount" style="position:absolute;top:-8px;right:-8px;background:#7f1d1d;font-size:10px;padding:2px 5px;border-radius:10px;display:none">0</span></span></div>
+  </div>
+  <div id="pendingBox" class="card pending" style="display:none">
+    <div style="color:#fbbf24;font-weight:700">⏳ Pending Approvals (<span id="pendingCount">0</span>)</div>
+    <div id="pendingList" style="margin-top:10px"></div>
+  </div>
+  <div id="pendingLoanBox" class="card pending" style="display:none">
+    <div style="color:#fbbf24;font-weight:700">⏳ Pending Loans Waiting for Approval (<span id="pendingLoanCount">0</span>)</div>
+    <div id="pendingLoanList" style="margin-top:10px"></div>
+    <button onclick="location.href='loans.html'" style="margin-top:10px;background:#f59e0b;color:#000;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer">Go to Loans to Approve →</button>
+  </div>
+  <div class="cards">
+    <div class="card" style="margin:0"><div class="icon-box blue">👥</div><div id="totalMembers" class="card-num">227</div><div class="card-label">Total Members</div><div style="color:#64748b;font-size:11px" id="membersHeaderTitle">227 registered members</div></div>
+    <div class="card" style="margin:0"><div class="icon-box green">🐖</div><div class="card-num" id="totalSavingsCard">LSL 1.6M</div><div class="card-label">Total Savings</div></div>
+    <div class="card" style="margin:0"><div class="icon-box yellow">🏛️</div><div class="card-num" id="activeLoansCard">LSL 2.9M</div><div class="card-label">Active Loans</div></div>
+    <div class="card" style="margin:0"><div class="icon-box emerald">📊</div><div class="card-num" id="totalSharesCard">204</div><div class="card-label">Total Shares</div></div>
+  </div>
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:10px">📈 Member Growth</div>
+    <canvas id="growthChart"></canvas>
+    <div id="dashTxHistory" style="display:none"></div>
+  </div>
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:10px">Recent Transactions</div>
+    <div id="recentTx">
+      <div class="trans-row"><div><div style="font-weight:600;font-size:13px">Malichaba Thamae</div><div style="color:#64748b;font-size:11px">Deposit — Monthly payment</div></div><div><div style="color:#22c55e;font-weight:700;font-size:13px">+LSL 350</div><div style="color:#64748b;font-size:11px">24/10/2026</div></div></div>
+      <div class="trans-row"><div><div style="font-weight:600;font-size:13px">Makalang Mokoaleli</div><div style="color:#64748b;font-size:11px">Deposit — Monthly payment</div></div><div><div style="color:#22c55e;font-weight:700;font-size:13px">+LSL 100</div><div style="color:#64748b;font-size:11px">24/10/2026</div></div></div>
+      <div class="trans-row"><div><div style="font-weight:600;font-size:13px">Mantane Kutausi</div><div style="color:#64748b;font-size:11px">Deposit</div></div><div><div style="color:#22c55e;font-weight:700;font-size:13px">+LSL 100</div><div style="color:#64748b;font-size:11px">24/10/2026</div></div></div>
+      <div class="trans-row"><div><div style="font-weight:600;font-size:13px">'MAKHOPOTSO PHENDUKA</div><div style="color:#64748b;font-size:11px">Deposit — Monthly Savings</div></div><div><div style="color:#22c55e;font-weight:700;font-size:13px">+LSL 740</div><div style="color:#64748b;font-size:11px">23/10/2026</div></div></div>
+    </div>
+  </div>
+  <div class="card"><div style="font-weight:700;margin-bottom:20px">Dividends</div><div style="color:#64748b;text-align:center;padding:10px">No dividend distributions yet.</div></div>
+  <div class="card"><div style="font-weight:700">All Members</div><div id="membersTable" style="margin-top:10px"></div></div>
+</div>
+<script>
+  if(localStorage.getItem('pe_role')!=='admin'){ location.href='/index.html'; }
+function getPendingLoans(){ try{ return JSON.parse(localStorage.getItem('pendingLoans')||'[]'); }catch(e){ return []; } }
+function savePendingLoans(l){ localStorage.setItem('pendingLoans', JSON.stringify(l)); updateLoanBadge(); renderPendingLoans(); }
+function updateLoanBadge(){ let list=getPendingLoans().filter(p=>p.status==='pending'); let b=document.getElementById('loanBadge'); if(b){ b.style.display=list.length?'inline-flex':'none'; b.innerText=list.length; } let bell=document.getElementById('topBellCount'); if(bell){ bell.style.display=list.length?'block':'none'; bell.innerText=list.length; } }
+function renderPendingLoans(){
+  let list=getPendingLoans().filter(p=>p.status==='pending');
+  let box=document.getElementById('pendingLoanBox'); if(!box) return;
+  document.getElementById('pendingLoanCount').innerText=list.length;
+  if(!list.length){ box.style.display='none'; return; }
+  box.style.display='block';
+  document.getElementById('pendingLoanList').innerHTML=list.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;flex-wrap:wrap;gap:8px"><span style="font-size:13px"><b>${p.memberName||p.memberId}</b> (${p.memberId}) — ${p.loanType} — LSL ${Number(p.amount||0).toLocaleString()} — Total LSL ${Number(p.totalToRepay||p.amount||0).toLocaleString()}</span><span style="display:flex;gap:6px"><button class="btn-approve" onclick="approveLoan('${p.id}')">Approve</button><button class="btn-reject" onclick="rejectLoan('${p.id}')">Reject</button></span></div>`).join('');
+}
+async function approveLoan(pid){
+  let list=getPendingLoans(); let p=list.find(x=>x.id===pid); if(!p) return; if(!confirm('Approve '+p.loanType+' LSL '+p.amount+' for '+p.memberName+'?')) return;
+  let res=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:p.memberId,member_no:p.memberId,type:'loan',amount:p.amount,principal:p.amount,totalToRepay:p.totalToRepay,loanType:p.loanType,months:p.months,duration:p.months,rate:p.rate,nextKinName:p.nextKinName||'',nextKinPhone:p.nextKinPhone||'',desc:'Loan - '+p.loanType,date:new Date().toISOString()})});
+  if(!res.ok) return alert('Approve FAILED');
+  p.status='approved'; savePendingLoans(list); alert('✅ Approved! Loan is now active.'); updateCounts();
+}
+function rejectLoan(pid){ let list=getPendingLoans(); let p=list.find(x=>x.id===pid); if(!p) return; if(!confirm('Reject loan for '+p.memberName+'?')) return; p.status='rejected'; savePendingLoans(list); alert('Loan rejected.'); }
+function drawGrowth(total){
+  let c=document.getElementById('growthChart'); if(!c) return;
+  let ctx=c.getContext('2d');
+  let w=c.width=c.offsetWidth*2, h=c.height=260*2;
+  ctx.clearRect(0,0,w,h);
+  let labels=['Dec 25','Jan 26','Feb 26','Mar 26','Apr 26','May 26','Jun 26','Jul 26','Aug 26','Sep 26','Oct 26','Nov 26'];
+  let shape=[0,0,0,0.08,0.65,0.78,0.82,0.86,0.90,0.93,0.97,1];
+  let vals=shape.map(s=>Math.round(s*total));
+  let max=240; if(total>240) max=Math.ceil(total/50)*50;
+  let padL=70, padB=50, padT=20, padR=20;
+  let cw=w-padL-padR, ch=h-padB-padT;
+  ctx.strokeStyle='#334155'; ctx.fillStyle='#64748b'; ctx.font='22px Inter'; ctx.textAlign='right';
+  for(let i=0;i<=4;i++){ let y=padT+ch-(ch*i/4); ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.strokeStyle='#1e293b'; ctx.stroke(); ctx.fillText(Math.round(max*i/4), padL-12, y+8); }
+  ctx.textAlign='center';
+  labels.forEach((l,i)=>{ let x=padL+cw*i/(labels.length-1); ctx.fillText(l, x, h-12); });
+  ctx.beginPath();
+  vals.forEach((v,i)=>{ let x=padL+cw*i/(labels.length-1); let y=padT+ch-(ch*v/max); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+  ctx.strokeStyle='#22c55e'; ctx.lineWidth=4; ctx.stroke();
+  ctx.lineTo(padL+cw, padT+ch); ctx.lineTo(padL, padT+ch); ctx.closePath();
+  ctx.fillStyle='rgba(34,197,94,0.12)'; ctx.fill();
+}
+async function updateCounts(){
+  try{
+    const r1=await fetch('/api/members'); const m=await r1.json();
+    let members=Array.isArray(m)?m:(m.members||[]);
+    document.getElementById('totalMembers').innerText=members.length||227;
+    document.getElementById('membersHeaderTitle').innerText=members.length+' registered members';
+    try{
+      const rt=await fetch('/api/transactions'); const td=await rt.json();
+      let txs=Array.isArray(td)?td:(td.transactions||[]);
+      let savings=0, loans=0;
+      txs.forEach(t=>{ let a=Number(t.amount||0); let ty=(t.type||'').toLowerCase(); if(ty.includes('loan') && !ty.includes('repay')) loans+=a; else if(ty.includes('deposit')||ty.includes('saving')) savings+=a; });
+      if(savings>0) document.getElementById('totalSavingsCard').innerText='LSL '+(savings>=1000000?(savings/1000000).toFixed(1)+'M':savings.toLocaleString());
+      if(loans>0) document.getElementById('activeLoansCard').innerText='LSL '+(loans>=1000000?(loans/1000000).toFixed(1)+'M':loans.toLocaleString());
+      let shares=members.reduce((s,x)=>s+Number(x.shares||0),0);
+      if(shares>0) document.getElementById('totalSharesCard').innerText=shares;
+      if(txs.length){
+        let sorted=[...txs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4);
+        document.getElementById('recentTx').innerHTML=sorted.map(t=>`<div class="trans-row"><div><div style="font-weight:600;font-size:13px">${t.memberName||t.memberId||'Member'}</div><div style="color:#64748b;font-size:11px">${t.type} — ${t.desc||t.description||''}</div></div><div><div style="color:#22c55e;font-weight:700;font-size:13px">+LSL ${Number(t.amount||0).toLocaleString()}</div><div style="color:#64748b;font-size:11px">${new Date(t.date).toLocaleDateString('en-GB')}</div></div></div>`).join('');
+      }
+    }catch(e){}
+    drawGrowth(members.length||227);
+    const r2=await fetch('/api/pending-members'); const p=await r2.json();
+    document.getElementById('pendingCount').innerText=p.length;
+    if(p.length>0){ document.getElementById('pendingBox').style.display='block'; document.getElementById('pendingList').innerHTML=p.map(x=>`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;border-radius:8px;margin-top:6px"><span style="font-size:12px">${x.name||x.fullName} - ${x.email}</span><button class="btn-approve" onclick="approveMember('${x.id}')">Approve</button></div>`).join(''); } else document.getElementById('pendingBox').style.display='none';
+  }catch(e){ drawGrowth(227); }
+  updateLoanBadge(); renderPendingLoans();
+}
+async function loadMembers(){
+  try{ const r=await fetch('/api/members'); const data=await r.json(); let members=Array.isArray(data)?data:(data.members||[]);
+    document.getElementById('membersTable').innerHTML=members.map(m=>`<div style="padding:8px 0;border-bottom:1px solid #1e293b;font-size:12px">${m.id||m.member_no} - ${m.name||m.fullName} - ${m.email||''}</div>`).join('')||'No members';
+  }catch(e){}
+}
+async function approveMember(id){ if(!confirm('Approve?'))return; await fetch('/api/approve-member',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); updateCounts(); loadMembers(); }
+updateCounts(); loadMembers(); updateLoanBadge(); renderPendingLoans(); setInterval(updateCounts,3000); setInterval(updateLoanBadge,2000);
+async function loadMemberHistory(){
+  const memberId = localStorage.getItem('lastMemberId');
+  if(!memberId) return;
+  const res = await fetch('/api/transactions?memberId='+memberId);
+  const txs = await res.json();
+  const el = document.getElementById('dashTxHistory');
+  if(!el) return;
+  if(txs.length===0){ el.innerHTML='No transactions yet'; return; }
+  el.innerHTML = txs.reverse().map(t=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #334155;padding:5px 0"><span>${t.type} ${t.desc}</span><span>LSL ${t.amount}</span></div>`).join('');
+}
+loadMemberHistory();
+</script>
+</body>
+</html>

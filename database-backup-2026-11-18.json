@@ -1,0 +1,274 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin",
+      "email": "mosedikat@gmail.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Staff",
+      "email": "staff",
+      "password": "staff123",
+      "role": "staff"
+    }
+  ],
+  "members": [
+    {
+      "id": "M201",
+      "name": "Poverty",
+      "email": "povertyeradication29@gmail.com",
+      "phone": "57327700",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Pesacoss",
+      "status": "approved",
+      "date": "2026-10-23T12:02:28.503Z",
+      "savings": 1250,
+      "balance": 1250,
+      "loan": 0,
+      "loanBalance": 0
+    },
+    {
+      "id": "M202",
+      "name": "Mosedi Katleho",
+      "email": "mosedikat@gmail.com",
+      "phone": "58835011",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Success@yahoo1",
+      "status": "approved",
+      "date": "2026-10-23T13:05:01.276Z",
+      "savings": 5455,
+      "balance": 5455,
+      "loan": 0,
+      "loanBalance": 0
+    },
+    {
+      "id": "M203",
+      "name": "moahloli motloang",
+      "email": "moahloli@gmail.com",
+      "phone": "58900078",
+      "idNumber": "987654321",
+      "gender": "Female",
+      "password": "Moahloli@1998",
+      "status": "approved",
+      "date": "2026-10-24T14:12:41.590Z",
+      "savings": 6000,
+      "balance": 6000,
+      "loan": 0,
+      "loanBalance": 0
+    },
+    {
+      "id": "M204",
+      "name": "bob Moseli",
+      "email": "bob@gmail.com",
+      "phone": "58521415",
+      "idNumber": "101010101010",
+      "gender": "Male",
+      "password": "bob@1988",
+      "status": "approved",
+      "date": "2026-10-27T12:45:28.986Z",
+      "savings": 100,
+      "balance": 100,
+      "loan": 0,
+      "loanBalance": 0
+    },
+    {
+      "id": "M205",
+      "name": "TT Foulo",
+      "email": "tlokotsi@gmail.com",
+      "phone": "52856554",
+      "idNumber": "0258896547",
+      "gender": "Male",
+      "password": "123456789",
+      "status": "approved",
+      "date": "2026-10-30T13:06:06.751Z",
+      "savings": 7000,
+      "balance": 7000,
+      "loan": 2500,
+      "loanBalance": 2500
+    }
+  ],
+  "pendingMembers": [],
+  "transactions": [
+    {
+      "id": 1793111615257,
+      "memberId": "M201",
+      "amount": 150,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:33:35.257Z"
+    },
+    {
+      "id": 1793111728774,
+      "memberId": "M201",
+      "amount": 200,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:35:28.774Z"
+    },
+    {
+      "id": 1793111990812,
+      "memberId": "M202",
+      "amount": 6000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:39:50.812Z"
+    },
+    {
+      "id": 1793112013685,
+      "memberId": "M202",
+      "amount": 455,
+      "type": "Deposit",
+      "desc": "Monthly Savings",
+      "date": "2026-10-27T14:40:13.685Z"
+    },
+    {
+      "id": 1793177128556,
+      "memberId": "M201",
+      "amount": 100,
+      "type": "Withdrawal",
+      "desc": "",
+      "date": "2026-10-28T08:45:28.556Z"
+    },
+    {
+      "id": 1793179514579,
+      "memberId": "M202",
+      "amount": 100,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-10-28T09:25:14.579Z"
+    },
+    {
+      "id": 1793190713091,
+      "memberId": "M201",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-28T12:31:53.091Z"
+    },
+    {
+      "id": 1793196500377,
+      "memberId": "M204",
+      "amount": 100,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-28T14:08:20.377Z"
+    },
+    {
+      "id": 1793365716717,
+      "memberId": "M205",
+      "amount": 7000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-30T13:08:36.717Z"
+    },
+    {
+      "id": 1793803534125,
+      "memberId": "[object HTMLParagraphElement]",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T14:45:34.125Z"
+    },
+    {
+      "id": 1793803554144,
+      "memberId": "[object HTMLParagraphElement]",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T14:45:54.144Z"
+    },
+    {
+      "id": 1794321053964,
+      "memberId": "M202",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "monthly savings",
+      "date": "2026-11-10T14:30:53.964Z"
+    },
+    {
+      "id": 1794322214257,
+      "memberId": "M205",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-10T14:50:14.257Z"
+    },
+    {
+      "id": 1794386569546,
+      "memberId": "M201",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "November monthly savings",
+      "date": "2026-11-11T08:42:49.546Z"
+    },
+    {
+      "id": 1794386788364,
+      "memberId": "M202",
+      "amount": 1000,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-11-11T08:46:28.364Z"
+    },
+    {
+      "id": 1794397784704,
+      "memberId": "M202",
+      "amount": 500,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-11-11T11:49:44.704Z"
+    },
+    {
+      "id": 1794417246137,
+      "memberId": "M203",
+      "amount": 5000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-11-11T17:14:06.137Z"
+    },
+    {
+      "id": 1794479095905,
+      "memberId": "M205",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-12T10:24:55.905Z"
+    },
+    {
+      "id": 1794479256678,
+      "memberId": "M205",
+      "amount": 500,
+      "type": "repayment",
+      "desc": "Repayment - Emergency",
+      "date": "2026-11-12T10:27:36.678Z"
+    },
+    {
+      "id": 1794485917495,
+      "memberId": "M205",
+      "amount": 1000,
+      "type": "repayment",
+      "desc": "Repayment - emergency",
+      "date": "2026-11-12T12:18:37.480Z",
+      "loanType": "emergency",
+      "member_no": "M205",
+      "principal": 1000,
+      "totalToRepay": null
+    },
+    {
+      "id": 1794509861863,
+      "memberId": "M203",
+      "amount": 1000,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-11-12T18:57:41.861Z",
+      "loanType": "",
+      "member_no": "M203",
+      "principal": 1000,
+      "totalToRepay": null
+    }
+  ]
+}

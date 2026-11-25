@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings - P. E. SACCOS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;color:#e2e8f0;font-family:Inter,Arial}
+.top{padding:20px 24px}
+.top h1{margin:0;font-size:28px;color:white}
+.top p{margin:4px 0 0 0;color:#64748b;font-size:14px}
+.tabs{display:flex;gap:8px;padding:0 24px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;border-radius:999px;border:1px solid #1e293b;background:#1e293b;color:#94a3b8;cursor:pointer;font-size:13px;flex-shrink:0}
+.tab.active{background:#e2e8f0;color:#0f172a;font-weight:700}
+.card{margin:16px 24px;background:#151e32;border:1px solid #1e293b;border-radius:16px;padding:24px;max-width:700px}
+.card h2{margin:0 0 6px 0;color:white;font-size:18px}
+.card p.desc{margin:0 0 20px 0;color:#64748b;font-size:13px}
+label{color:#cbd5e1;font-size:13px;display:block;margin:14px 0 6px 0}
+.input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #1e293b;background:#0f172a;color:white;font-size:15px}
+.logo-row{display:flex;gap:16px;align-items:center;margin-top:10px}
+.logo-box{width:72px;height:72px;border-radius:12px;background:#1e293b;border:1px solid #334155;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.logo-box img{width:100%;height:100%;object-fit:cover}
+.btn-upload{background:#1e293b;border:1px solid #334155;color:white;padding:10px 18px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.hint{color:#475569;font-size:11px;margin-top:8px}
+.btn-save{margin-top:24px;background:#4ade80;color:#052e16;border:none;padding:14px 22px;border-radius:12px;font-weight:bold;cursor:pointer}
+.hidden{display:none}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:10px;border-bottom:1px solid #1e293b;font-size:13px;text-align:left}
+.btn-del{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}
+.back{margin:0 24px 10px 24px;background:#1e293b;border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+</style></head>
+<body>
+<div class="top"><h1>Settings</h1><p>Manage your account and preferences</p></div>
+<button class="back" onclick="location.href='/dashboard.html'">← Dashboard</button>
+<div class="tabs" id="tabs">
+<button class="tab active" onclick="openTab('branding')">Branding</button>
+<button class="tab" onclick="openTab('users')">Users</button>
+<button class="tab" onclick="openTab('loans')">Loans</button>
+<button class="tab" onclick="openTab('profile')">Profile</button>
+<button class="tab" onclick="openTab('email')">Email</button>
+<button class="tab" onclick="openTab('password')">Password</button>
+<button class="tab" onclick="openTab('shares')">Shares</button>
+<button class="tab" onclick="openTab('theme')">Theme</button>
+</div>
+
+<div id="branding" class="card">
+<h2>SACCO Branding</h2>
+<p class="desc">Customize your organization's name and logo.</p>
+<label>SACCO Name</label>
+<input class="input" id="saccoName" value="P. E. SACCOS LTD">
+<label>Logo</label>
+<div class="logo-row">
+<div class="logo-box"><img src="https://cdn-icons-png.flaticon.com/512/1048/1048953.png" alt="logo"></div>
+<button class="btn-upload" onclick="alert('Logo upload - choose image from your PC')"><span>↑</span> Upload Logo</button>
+</div>
+<div class="hint">Recommended: Square image, at least 200x200px</div>
+<button class="btn-save" onclick="saveBranding()">Save Branding</button>
+</div>
+
+<div id="users" class="card hidden">
+<h2>Users</h2><p class="desc">Manage all system users - Delete duplicate Moseli</p>
+<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody id="tbody">Loading...</tbody></table>
+</div>
+
+<div id="loans" class="card hidden"><h2>Loan Settings</h2><p class="desc">Configure loan interest and products</p><input class="input" value="Interest 10% per annum"><button class="btn-save">Save Loans</button></div>
+<div id="profile" class="card hidden"><h2>Profile</h2><p class="desc">Update your personal info</p><input class="input" id="pName" placeholder="Name"><button class="btn-save">Save Profile</button></div>
+<div id="email" class="card hidden"><h2>Email</h2><p class="desc">Email notifications settings</p><input class="input" value="mosedikat@gmail.com"><button class="btn-save">Save Email</button></div>
+<div id="password" class="card hidden"><h2>Password</h2><p class="desc">Change password</p><input class="input" type="password" placeholder="New password"><button class="btn-save">Update Password</button></div>
+<div id="shares" class="card hidden"><h2>Shares</h2><p class="desc">Share value configuration</p><input class="input" value="LSL 100 per share"><button class="btn-save">Save Shares</button></div>
+<div id="theme" class="card hidden"><h2>Theme</h2><p class="desc">Dark / Light mode</p><button class="btn-save">Toggle Theme</button></div>
+
+<script>
+function openTab(name){
+document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+document.getElementById(name).classList.remove('hidden');
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+event.target.classList.add('active');
+if(name==='users') loadUsers();
+}
+function saveBranding(){
+localStorage.setItem('saccoName', document.getElementById('saccoName').value);
+alert('Branding saved: '+document.getElementById('saccoName').value);
+}
+async function loadUsers(){
+const r=await fetch('/api/users'); const users=await r.json();
+document.getElementById('tbody').innerHTML=users.map(u=>`<tr><td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td>${u.email==='mosedikat@gmail.com'?'Protected':`<button class="btn-del" onclick="delUser('${u.email}')">Delete</button>`}</td></tr>`).join('');
+}
+async function delUser(email){
+if(!confirm('Delete '+email+'?'))return;
+const res=await fetch('/api/delete-user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+if(res.ok){alert('Deleted'); loadUsers();} else {const d=await res.json(); alert(d.error);}
+}
+loadUsers();
+</script>
+</body></html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Members - P.E. SACCOS LTD</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#fff;font-family:Arial;display:flex;min-height:100vh}
+.sidebar{width:250px;background:#020617;padding:18px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.sidebar a{display:flex;align-items:center;gap:8px;color:#cbd5e1;text-decoration:none;padding:10px;border-radius:8px;margin:4px 0;font-size:14px}
+.sidebar a.on,.sidebar a:hover{background:#1e293b;color:#fff}
+.sidebar .label{color:#64748b;font-size:12px;margin:18px 0 6px}
+.main{flex:1;padding:20px;overflow:auto}
+.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.btn-green{background:#22c55e;color:#fff}.btn-gray{background:#334155;color:#fff}
+#search{width:100%;padding:12px;border-radius:10px;background:#1e293b;border:1px solid #334155;color:#fff}
+.member-item{background:#1e293b;border:1px solid #2d3a52;padding:12px 16px;margin:8px 0;border-radius:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.avatar{width:42px;height:42px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px}
+#memberDetail{display:none}.back{cursor:pointer;font-size:20px;margin-right:10px}
+.act{padding:9px 14px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer;font-weight:600;font-size:13px}
+.act.green{background:#22c55e;color:#fff;border:none}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.card{background:#1e293b;border:1px solid #2d3a52;border-radius:14px;padding:18px}
+.card small{color:#94a3b8}.card b{font-size:26px;display:block;margin:6px 0}
+.tx-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #334155}
+input,select{width:100%;padding:9px;margin:6px 0;border-radius:8px;background:#0f172a;color:#fff;border:1px solid #334155}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:1000}
+.modal-box{background:#1e293b;border-radius:16px;padding:20px;width:92%;max-width:400px}
+.clear-wrap{position:relative}
+.clear-menu{position:absolute;top:42px;right:0;background:#1e293b;border:1px solid #334155;border-radius:12px;width:260px;display:none;z-index:2000;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.clear-opt{display:block;width:100%;text-align:left;padding:12px 14px;background:none;border:none;color:#fff;cursor:pointer;font-size:14px;border-bottom:1px solid #1e293b}
+.clear-opt:hover{background:#334155}
+.clear-opt.danger{color:#fca5a5;font-weight:700}
+.clear-opt small{color:#94a3b8;display:block;font-weight:400}
+.loan-badge{margin-left:auto;background:#f59e0b;color:#000;font-weight:800;font-size:12px;min-width:24px;height:24px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
+@media(max-width:900px){.sidebar{display:none}.cards{grid-template-columns:1fr}}
+</style></head><body>
+<div class="sidebar"><h3>🌟 P.E. SACCOS LTD</h3><small style="color:#94a3b8">mosedikat@gm... • admin</small>
+<div class="label">Menu</div>
+<a href="dashboard.html">⊞ Dashboard</a>
+<a href="staff-dashboard.html">▦ Staff Dashboard</a>
+<a href="members.html" class="on">👥 Members</a>
+<a href="savings.html">🐷 Savings</a>
+<a href="loans.html">🏦 Loans <span id="loanBadge" class="loan-badge">0</span></a>
+<a href="loan-products.html">📦 Loan Products</a>
+<a href="loan-calculator.html">🧮 Loan Calculator</a>
+<a href="dividends.html">💰 Dividends</a>
+<a href="reports.html">📄 Reports</a>
+<div class="label">System</div>
+<a href="repayment-audit.html">📋 Repayment Audit</a>
+<a href="settings.html">⚙ Settings</a>
+<a href="#" style="margin-top:20px">↩ Logout</a></div>
+<div class="main">
+<div id="listView"><h2>Members <span id="count"></span></h2><button class="btn btn-gray" onclick="load()">Reload</button><input id="search" placeholder="Search by name or number..." oninput="filterMembers()"><div id="memberList" style="margin-top:15px"></div></div>
+<div id="memberDetail">
+<div><span class="back" onclick="closeDetail()">←</span> <b id="dName" style="font-size:24px"></b> <span id="dNo"></span></div>
+<div style="display:flex;gap:8px;margin:16px 0;flex-wrap:wrap"><button class="act green" onclick="openLoan()">+ New Loan</button><button class="act" style="background:#f59e0b;color:#000;border:none" onclick="openRepay()">💰 Pay Loan</button><div class="clear-wrap"><button class="act" style="background:#ef4444;color:#fff;border:none" onclick="toggleClearMenu(event)">🗑️ Clear Loans ▼</button>
+  <button onclick="openStmt()" style="background:#0a7a3a;color:#fff;padding:10px 18px;border:0;border-radius:8px;cursor:pointer;font-weight:bold;margin-left:8px">📄 Statement</button>
+  <button onclick="openRecordTx()" style="background:#22c55e;color:#fff;padding:10px 18px;border:0;border-radius:8px;cursor:pointer;font-weight:bold;margin-left:8px">+ Record Transaction</button>
+  <div class="clear-menu" id="clearMenu"><button class="clear-opt" onclick="openClearOne()">🗑️ Clear One Loan...<small>Pick one loan, others stay</small></button><button class="clear-opt" onclick="clearByType('Emergency')">🗑️ Clear Emergency<small>All Emergency loans only</small></button><button class="clear-opt" onclick="clearByType('Long term')">🗑️ Clear Long term<small>All Long term loans only</small></button><button class="clear-opt" onclick="clearByType('Revolving')">🗑️ Clear Revolving<small>All Revolving loans only</small></button><button class="clear-opt" onclick="clearByType('Loyalty')">🗑️ Clear Loyalty<small>All Loyalty loans only</small></button><button class="clear-opt danger" onclick="clearAllLoans()">🗑️ Clear ALL Loans<small>All loans for THIS member only</small></button></div></div></div>
+<div class="cards">
+<div class="card"><small>Total Savings</small><b id="dSavings">LSL 0</b></div>
+<div class="card"><small>Shares</small><b id="dShares">0</b></div>
+<div class="card"><small>Active Loan Balance</small><b id="dLoanBalance">LSL 0.00</b><div style="font-size:13px;color:#94a3b8" id="dLoanBreakdown"></div><div style="font-size:13px;color:#94a3b8" id="dLoanCount"></div></div>
+</div><h3>History</h3><div id="txHistory"></div></div></div>
+<div id="loanModal" class="modal"><div class="modal-box" style="max-width:520px;max-height:92vh;overflow-y:auto">
+<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">New Loan Application</h3><span style="cursor:pointer;font-size:20px" onclick="closeLoan()">×</span></div>
+<label>Member</label><select id="loanMemberSelect" onchange="validateLoanForm();calcLoan()"></select>
+<label>Loan Product</label><select id="loanType" onchange="onProductChange()"><option value="">Select loan product</option><option value="Emergency" data-rate="5" data-months="1">Emergency - 5% - 1 or 3 Months</option><option value="Long term" data-rate="30" data-months="60">Long term - 30% (10% Insurance + 20% Interest) - Up to 60 Months</option><option value="Revolving" data-rate="20" data-months="60">Revolving - 20% - up to 60 Months</option><option value="Loyalty" data-rate="0.01" data-months="24">Loyalty - 0.01% - 24 Months</option></select>
+<label>Loan Amount (LSL)</label><input id="loanAmount" type="number" placeholder="e.g. 50000" oninput="calcLoan();validateLoanForm()">
+<label>Duration (months)</label><input id="loanDuration" type="number" value="1" disabled>
+<div id="loanPreview" style="display:none;background:#0f172a;padding:12px;border-radius:10px;margin:10px 0"><div style="display:flex;justify-content:space-between"><span>Total to Repay:</span><b id="pTotal" style="color:#fbbf24"></b></div><div style="display:flex;justify-content:space-between"><span>Monthly:</span><b id="pMonthly"></b></div><div id="pNote" style="font-size:12px;color:#fbbf24;margin-top:6px"></div><div id="pSavingsInfo" style="font-size:12px;color:#94a3b8;margin-top:4px"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>Next of Kin or Spouse Name</label><input id="nextKinName" placeholder="Full name"></div><div><label>Next of Kin or Spouse Phone</label><input id="nextKinPhone" placeholder="e.g. +266 5800 0000"></div></div>
+<label>E-Signature <span style="color:#94a3b8">(optional)</span></label><div style="color:#94a3b8;font-size:12px;margin-bottom:6px">Draw your signature below to authorize this loan application</div>
+<canvas id="sigCanvas" style="width:100%;height:120px;background:#0f172a;border:1px solid #334155;border-radius:12px;cursor:crosshair;touch-action:none"></canvas>
+<div style="display:flex;justify-content:space-between;margin-top:6px"><small style="color:#94a3b8">Sign here</small><button type="button" class="btn btn-gray" style="padding:4px 10px;font-size:12px" onclick="clearSig()">Clear</button></div>
+<label>Terms & Conditions</label><div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:12px;font-size:13px;color:#94a3b8;line-height:1.5;max-height:130px;overflow-y:auto">1. By accepting this loan, the borrower agrees to repay the principal amount plus interest at the agreed rate. Late payments will incur a penalty of 100% per month on the outstanding monthly interest. The borrower authorizes the SACCO to deduct repayments from savings / salary where applicable.<br><br><b>EMERGENCY RULES:</b> Max 5000. Savings 1000 = max 3000, Savings 2000 = max 4000, Savings 3000 = max 5000. If Savings less than Loan = max 2000 in 1 month. All Emergency over 2000 = 3 months. Only 1 Emergency at a time, but can have other loans.<br><br><b>LONG TERM RULES:</b> 30% total (10% Insurance + 20% Interest). Up to 60 months. Only 1 Long term at a time. Must have Savings more than 2000. Max = Savings x 3.<br><br><b>REVOLVING RULES:</b> 20% interest, up to 60 months. Can only be taken with Long term loan. Must have paid 38% of Long term (Principal + Interest) before Revolving. Only 1 Revolving at a time.<br><br><b>LOYALTY RULES:</b> 0.01% interest, 24 months. Only 1 Loyalty at a time. Can take Loyalty + either Long term OR Emergency (not both, not with Revolving). Max = (Savings - Outstanding Loan) / 2. To qualify Savings must be greater than Outstanding Loan.</div>
+<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin-top:10px"><input id="termsCheck" type="checkbox" style="width:20px;height:20px;flex-shrink:0;margin:0" onchange="validateLoanForm()"> <span>I have read and accept the terms and conditions</span></label>
+<div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end"><button class="btn btn-gray" onclick="closeLoan()">Cancel</button><button id="submitLoanBtn" class="btn" style="background:#14532d;color:#94a3b8;cursor:not-allowed" onclick="issueLoan()">Submit Application</button></div>
+</div></div>
+<div id="repayModal" class="modal"><div class="modal-box">
+<h3>💰 Pay Loan - <span id="repayMemberName"></span></h3><p id="repayInfo"></p>
+<label>Loan Type to Pay</label><select id="repayType"><option>Emergency</option><option>Long term</option><option>Revolving</option><option>Loyalty</option></select>
+<label>Amount (LSL)</label><input id="repayAmount" type="number" placeholder="e.g. 500">
+<label>Method</label><select id="repayMethod"><option>Cash</option><option>Bank Transfer</option><option>Mobile Money</option><option>Salary Deduction</option></select>
+<div style="display:flex;gap:10px;margin-top:10px"><button class="btn btn-green" style="flex:1" onclick="doRepay()">Pay Now</button><button class="btn btn-gray" style="flex:1" onclick="document.getElementById('repayModal').style.display='none'">Cancel</button></div></div></div>
+<div id="clearOneModal" class="modal"><div class="modal-box" style="max-width:480px"><h3>🗑️ Clear One Loan - <span id="clearOneName"></span></h3><p style="color:#94a3b8;font-size:13px">Click Clear on ONE loan. Others will stay.</p><div id="clearOneList"></div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-gray" style="flex:1" onclick="document.getElementById('clearOneModal').style.display='none'">Cancel</button></div></div></div>
+<script>
+if(localStorage.getItem('pe_role')!=='admin'){ location.href='/index.html'; }
+let allMembers=[], currentMember=null, currentLoan={principal:0,interest:0,repaid:0,total:0,active:0}, currentMemberTxs=[];
+function getPending(){ try{ return JSON.parse(localStorage.getItem('pendingLoans')||'[]'); }catch(e){ return []; } }
+function savePending(list){ localStorage.setItem('pendingLoans', JSON.stringify(list)); updateLoanBadge(); }
+function updateLoanBadge(){ let c=getPending().filter(p=>p.status==='pending').length; let b=document.getElementById('loanBadge'); if(!b) return; if(c>0){ b.style.display='inline-flex'; b.innerText=c; } else { b.style.display='none'; } }
+function rateFor(t){ t=(t||'').toLowerCase(); if(t.includes('emergency'))return 0.05; if(t.includes('long'))return 0.30; if(t.includes('revolving'))return 0.20; if(t.includes('loyalty'))return 0.0001; return 0.05; }
+function typeOf(t){ let s=((t.loanType||'')+' '+(t.desc||'')+' '+(t.type||'')).toLowerCase(); if(s.includes('emergency'))return 'emergency'; if(s.includes('long'))return 'long term'; if(s.includes('revolving'))return 'revolving'; if(s.includes('loyalty'))return 'loyalty'; return 'emergency'; }
+function labelOf(t){ let l=typeOf(t); return l==='long term'?'Long term':l.charAt(0).toUpperCase()+l.slice(1); }
+async function load(){ try{ let r=await fetch('/api/members'); let d=await r.json(); allMembers=d.members||d||[]; document.getElementById('count').innerText='('+allMembers.length+')'; render(allMembers); }catch(e){ document.getElementById('memberList').innerHTML='Cannot connect to server'; } updateLoanBadge(); }
+function render(list){ document.getElementById('memberList').innerHTML=list.map(m=>{ let name=m.name||'Unknown', no=m.member_no||m.id||'', phone=m.phone||''; let ini=name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase(); return `<div class="member-item" onclick="openDetail('${no}')"><div style="display:flex;align-items:center"><div class="avatar">${ini}</div><div><b>${name}</b><div style="color:#94a3b8;font-size:12px">${no} • ${phone}</div></div></div><button class="btn btn-gray" onclick="event.stopPropagation();openDetail('${no}')">View</button></div>`; }).join('')||'No members'; }
+function filterMembers(){ let q=document.getElementById('search').value.toLowerCase(); render(allMembers.filter(m=>(m.name||'').toLowerCase().includes(q)||String(m.member_no||m.id||'').toLowerCase().includes(q))); }
+function closeDetail(){ document.getElementById('memberDetail').style.display='none'; document.getElementById('listView').style.display='block'; }
+function toggleClearMenu(e){ e.stopPropagation(); let m=document.getElementById('clearMenu'); m.style.display=m.style.display==='block'?'none':'block'; }
+document.addEventListener('click',()=>{ let m=document.getElementById('clearMenu'); if(m) m.style.display='none'; });
+async function openDetail(id){
+  window.lastOpenedMemberId=id;
+  let m=allMembers.find(x=>String(x.member_no||x.id)===String(id)); if(!m) return; currentMember=m;
+  document.getElementById('listView').style.display='none'; document.getElementById('memberDetail').style.display='block';
+  document.getElementById('dName').innerText=m.name; document.getElementById('dNo').innerText=m.member_no||m.id;
+  document.getElementById('dSavings').innerText='LSL '+Number(m.savings||m.balance||0).toLocaleString();
+  document.getElementById('dShares').innerText=Number(m.shares||0);
+  document.getElementById('txHistory').innerHTML='Loading...';
+  try{
+    let r=await fetch('/api/transactions?memberId='+id); let txs=await r.json(); if(!Array.isArray(txs)) txs=txs.transactions||[]; currentMemberTxs=txs;
+    let per={}; let P=0,I=0,R=0;
+    txs.forEach(t=>{ let ty=((t.type||'')+' '+(t.desc||'')+' '+(t.loanType||'')).toLowerCase(); let amt=Number(t.amount||0); let lt=typeOf(t); if(!per[lt]) per[lt]={p:0,i:0,r:0}; if(ty.includes('repay')){ R+=amt; per[lt].r+=amt; } else if(ty.includes('loan')){ P+=amt; let intr=amt*rateFor(ty); I+=intr; per[lt].p+=amt; per[lt].i+=intr; } });
+    let active=0; Object.values(per).forEach(v=>{ if(v.p+v.i-v.r>0.01) active++; });
+    let total=Math.max(0,P+I-R); currentLoan={principal:P,interest:I,repaid:R,total,active,per};
+    document.getElementById('dLoanBalance').innerText='LSL '+total.toFixed(2);
+    document.getElementById('dLoanBreakdown').innerText='Principal '+P.toFixed(2)+' + Interest '+I.toFixed(2)+' - Repaid '+R.toFixed(2);
+    document.getElementById('dLoanCount').innerText=active?active+' active loans':'No active loans';
+    document.getElementById('txHistory').innerHTML=txs.length?txs.slice().reverse().map(t=>{
+      let ty=String(t.type||'').toLowerCase();
+      let isW=ty.includes('withdraw'); let isRepay=ty.includes('repay'); let isLoan=ty.includes('loan') && !isRepay;
+      let sign=(isW||isRepay)?'-':'+'; let color=(isW||isRepay)?'#ef4444':'#22c55e'; if(isLoan) color='#3b82f6';
+      return `<div class="tx-row"><div><b style="color:${color};text-transform:capitalize">${t.type}</b><div style="color:#94a3b8;font-size:12px">${t.desc||''} ${t.loanType?'• '+t.loanType:''}</div></div><b style="color:${color}">${sign} LSL ${Number(t.amount||0).toLocaleString()}</b></div>`;
+    }).join(''):'No transactions yet';
+  }catch(e){ document.getElementById('txHistory').innerHTML='No history'; }
+}
+function openLoan(){
+  if(!currentMember) return alert('Open a member first');
+  let sel=document.getElementById('loanMemberSelect');
+  sel.innerHTML=allMembers.map(m=>`<option value="${m.member_no||m.id}">${m.name} (${m.member_no||m.id})</option>`).join('');
+  sel.value=currentMember.member_no||currentMember.id;
+  document.getElementById('loanType').selectedIndex=0;
+  document.getElementById('loanAmount').value='';
+  document.getElementById('loanDuration').value=1;
+  document.getElementById('loanDuration').disabled=true;
+  document.getElementById('nextKinName').value='';
+  document.getElementById('nextKinPhone').value='';
+  document.getElementById('termsCheck').checked=false;
+  document.getElementById('loanPreview').style.display='none';
+  clearSig(); validateLoanForm();
+  document.getElementById('loanModal').style.display='grid';
+}
+function closeLoan(){ document.getElementById('loanModal').style.display='none'; }
+function getTotalSavingsFor(member){ if(!member) return 0; return Number(member.savings||member.balance||0)+(Number(member.shares||0)*100); }
+function getEmergencyEligibility(totalSavings,wanted){
+  let maxAllowed=2000;
+  if(totalSavings>=3000) maxAllowed=5000;
+  else if(totalSavings>=2000) maxAllowed=4000;
+  else if(totalSavings>=1000) maxAllowed=3000;
+  let months=wanted>2000?3:1;
+  let buffer=totalSavings-wanted;
+  return {maxAllowed,months,buffer};
+}
+function getLongTermEligibility(){
+  let mem=getSelectedMemberForLoan()||currentMember;
+  if(!mem) return {allowed:false, reason:'Please select a member', maxAllowed:0, savings:0};
+  let savings=getTotalSavingsFor(mem);
+  let maxAllowed=savings*3;
+  let per=(currentLoan && currentLoan.per)||{};
+  let selectedId=String(mem.member_no||mem.id);
+  let currentId=currentMember?String(currentMember.member_no||currentMember.id):'';
+  if(selectedId===currentId && per['long term']){ let lt=per['long term']; if((lt.p+lt.i-lt.r)>0.01) return {allowed:false, reason:'Member already has an ACTIVE Long term loan of LSL '+(lt.p+lt.i-lt.r).toFixed(2)+'. Cannot take 2 Long term loans.', maxAllowed, savings}; }
+  if(savings<=2000) return {allowed:false, reason:'Long term needs Savings more than 2000. Member Savings (Savings + Shares x 100) is only LSL '+savings.toLocaleString()+'.', maxAllowed, savings};
+  return {allowed:true, reason:'Savings LSL '+savings.toLocaleString()+' - Max LSL '+maxAllowed.toLocaleString()+' (Savings x 3)', maxAllowed, savings};
+}
+function getRevolvingEligibility(){
+  if(!currentMember) return {allowed:false, reason:'Please open a member first', paidPct:0};
+  let per = (currentLoan && currentLoan.per) || {};
+  if(per['revolving']){ let r=per['revolving']; if((r.p+r.i-r.r)>0.01) return {allowed:false, reason:'Member already has an ACTIVE Revolving loan of LSL '+(r.p+r.i-r.r).toFixed(2)+'. Only 1 Revolving at a time.', paidPct:0}; }
+  if(per['emergency']){ let e=per['emergency']; if((e.p+e.i-e.r)>0.01) return {allowed:false, reason:'Cannot take Revolving with an ACTIVE Emergency loan. Repay Emergency first. Revolving can only go with Long term.', paidPct:0}; }
+  if(per['loyalty']){ let l=per['loyalty']; if((l.p+l.i-l.r)>0.01) return {allowed:false, reason:'Cannot take Revolving with an ACTIVE Loyalty loan. Revolving can only go with Long term.', paidPct:0}; }
+  if(per['long term']){ let lt=per['long term']; let totalLT=lt.p+lt.i; let paid=lt.r; let pct=totalLT>0 ? (paid/totalLT*100) : 100; if(totalLT>0.01 && pct<38) return {allowed:false, reason:'Must have paid 38% of Long term loan first. Member paid '+pct.toFixed(1)+'% (LSL '+paid.toFixed(2)+' of LSL '+totalLT.toFixed(2)+'). Need LSL '+(totalLT*0.38).toFixed(2)+'.', paidPct:pct}; return {allowed:true, reason:'Long term paid '+pct.toFixed(1)+'% - Qualified', paidPct:pct}; }
+  return {allowed:true, reason:'No Long term loan - Qualified for Revolving', paidPct:100};
+}
+function getLoyaltyEligibility(){
+  let mem=getSelectedMemberForLoan()||currentMember;
+  if(!mem) return {allowed:false, reason:'Please select a member', maxAllowed:0, savings:0, outstanding:0};
+  let savings=getTotalSavingsFor(mem);
+  let per=(currentLoan && currentLoan.per)||{};
+  let outstanding=Math.max(0, (currentLoan?currentLoan.total:0));
+  // Loyalty outstanding should NOT count against itself - if member already has Loyalty, outstanding includes it, so subtract Loyalty balance for max calc
+  let loyaltyBal=0; if(per['loyalty']){ let l=per['loyalty']; loyaltyBal=Math.max(0,l.p+l.i-l.r); }
+  let otherOutstanding=Math.max(0, outstanding - loyaltyBal);
+  let maxAllowed=Math.max(0, (savings - otherOutstanding)/2);
+  if(per['loyalty']){ let l=per['loyalty']; if((l.p+l.i-l.r)>0.01) return {allowed:false, reason:'Member already has an ACTIVE Loyalty loan of LSL '+(l.p+l.i-l.r).toFixed(2)+'. Only 1 Loyalty at a time.', maxAllowed, savings, outstanding:otherOutstanding}; }
+  if(per['revolving']){ let r=per['revolving']; if((r.p+r.i-r.r)>0.01) return {allowed:false, reason:'Cannot take Loyalty with an ACTIVE Revolving loan. Loyalty can only go with Long term OR Emergency.', maxAllowed, savings, outstanding:otherOutstanding}; }
+  let hasLT=false, hasEm=false;
+  if(per['long term']){ let lt=per['long term']; if((lt.p+lt.i-lt.r)>0.01) hasLT=true; }
+  if(per['emergency']){ let e=per['emergency']; if((e.p+e.i-e.r)>0.01) hasEm=true; }
+  if(hasLT && hasEm) return {allowed:false, reason:'Member already has BOTH Long term + Emergency. Loyalty can only go with either Long term OR Emergency (not both). Repay one first.', maxAllowed, savings, outstanding:otherOutstanding};
+  if(savings<=otherOutstanding) return {allowed:false, reason:'To qualify Savings must be greater than Outstanding Loan. Savings LSL '+savings.toLocaleString()+' <= Loan LSL '+otherOutstanding.toFixed(2)+'.', maxAllowed, savings, outstanding:otherOutstanding};
+  if(maxAllowed<=0) return {allowed:false, reason:'Max Loyalty is LSL 0. (Savings - Loan) / 2 = ('+savings.toLocaleString()+' - '+otherOutstanding.toFixed(2)+') / 2', maxAllowed, savings, outstanding:otherOutstanding};
+  return {allowed:true, reason:'Savings LSL '+savings.toLocaleString()+' > Loan LSL '+otherOutstanding.toFixed(2)+' - Max LSL '+maxAllowed.toFixed(2)+' ((Savings - Loan)/2)', maxAllowed, savings, outstanding:otherOutstanding};
+}
+function getSelectedMemberForLoan(){ let el=document.getElementById('loanMemberSelect'); if(!el||!el.value) return currentMember; return allMembers.find(x=>String(x.member_no||x.id)===String(el.value))||currentMember; }
+function validateLoanForm(){
+  let ok=document.getElementById('loanMemberSelect').value && document.getElementById('loanType').value && Number(document.getElementById('loanAmount').value||0)>0 && document.getElementById('termsCheck').checked;
+  let type=document.getElementById('loanType').value; let amt=Number(document.getElementById('loanAmount').value||0);
+  if(type==='Emergency' && amt>0){ let mem=getSelectedMemberForLoan(); if(mem){ let check=getEmergencyEligibility(getTotalSavingsFor(mem),amt); if(amt>5000||amt>check.maxAllowed) ok=false; } }
+  if(type==='Long term' && amt>0){ let check=getLongTermEligibility(); if(!check.allowed) ok=false; if(amt>check.maxAllowed) ok=false; let months=Number(document.getElementById('loanDuration').value||0); if(months<1||months>60) ok=false; }
+  if(type==='Revolving' && amt>0){ let check=getRevolvingEligibility(); if(!check.allowed) ok=false; let months=Number(document.getElementById('loanDuration').value||0); if(months<1 || months>60) ok=false; }
+  if(type==='Loyalty' && amt>0){ let check=getLoyaltyEligibility(); if(!check.allowed) ok=false; if(amt>check.maxAllowed) ok=false; if(amt>=check.savings) ok=false; }
+  let btn=document.getElementById('submitLoanBtn'); btn.style.background=ok?'#22c55e':'#14532d'; btn.style.color=ok?'#fff':'#94a3b8'; btn.style.cursor=ok?'pointer':'not-allowed'; return ok;
+}
+function onProductChange(){
+  let sel=document.getElementById('loanType'), opt=sel.options[sel.selectedIndex]; let dur=document.getElementById('loanDuration');
+  if(sel.value==='Emergency'){ let amt=Number(document.getElementById('loanAmount').value||0); dur.value=amt>2000?3:1; dur.disabled=true; }
+  else if(sel.value==='Long term'){ dur.value=12; dur.disabled=false; dur.min=1; dur.max=60; dur.placeholder='1 to 60 months'; }
+  else if(sel.value==='Revolving'){ dur.value=12; dur.disabled=false; dur.min=1; dur.max=60; dur.placeholder='1 to 60 months'; }
+  else if(sel.value==='Loyalty'){ dur.value=24; dur.disabled=true; }
+  else if(opt && opt.dataset.months){ dur.value=opt.dataset.months; dur.disabled=true; }
+  calcLoan(); validateLoanForm();
+}
+function calcLoan(){
+  let sel=document.getElementById('loanType'), opt=sel.options[sel.selectedIndex];
+  if(!opt||!opt.value){ document.getElementById('loanPreview').style.display='none'; return; }
+  let amt=parseFloat(document.getElementById('loanAmount').value||0);
+  if(!amt){ document.getElementById('loanPreview').style.display='none'; return; }
+  let ratePct, months, note='', savingsInfo='';
+  if(sel.value==='Emergency'){
+    ratePct=5; let mem=getSelectedMemberForLoan(); let totalSavings=getTotalSavingsFor(mem); let check=getEmergencyEligibility(totalSavings,amt); months=check.months; document.getElementById('loanDuration').value=months;
+    savingsInfo='Savings + Shares: LSL '+totalSavings.toLocaleString()+' (Savings '+Number(mem?mem.savings||0:0).toLocaleString()+' + Shares '+Number(mem?mem.shares||0:0)+' x 100) | Buffer: '+check.buffer.toLocaleString()+' | Max Allowed: '+check.maxAllowed.toLocaleString();
+    if(amt>5000) note='Emergency max is LSL 5000';
+    else if(amt>check.maxAllowed) note='Max Emergency is LSL '+check.maxAllowed+' - Need Savings 1000 for 3000, 2000 for 4000, 3000 for 5000';
+    else note='Valid - '+months+' month(s) - Max '+check.maxAllowed;
+  } else if(sel.value==='Long term'){
+    ratePct=30; months=parseInt(document.getElementById('loanDuration').value||12); if(!months||months<1) months=1; if(months>60) months=60; document.getElementById('loanDuration').value=months;
+    let check=getLongTermEligibility();
+    if(!check.allowed) note=check.reason;
+    else if(amt>check.maxAllowed) note='Max Long term is LSL '+check.maxAllowed.toLocaleString()+' (Savings LSL '+check.savings.toLocaleString()+' x 3)';
+    else note='Valid - Long term '+months+' month(s) - '+check.reason;
+    savingsInfo='Long term: 30% total = 10% Insurance (LSL '+(amt*0.10).toFixed(2)+') + 20% Interest (LSL '+(amt*0.20).toFixed(2)+') | Savings LSL '+check.savings.toLocaleString()+' | Max LSL '+check.maxAllowed.toLocaleString()+' (x3) | Up to 60 months';
+  } else if(sel.value==='Revolving'){
+    ratePct=20; months=parseInt(document.getElementById('loanDuration').value||12); if(!months||months<1) months=1; if(months>60) months=60; document.getElementById('loanDuration').value=months;
+    let check=getRevolvingEligibility();
+    if(!check.allowed) note=check.reason;
+    else note='Valid - Revolving '+months+' month(s) - '+check.reason;
+    savingsInfo='Revolving: 20% interest, up to 60 months. Can only combine with Long term. Must have paid 38% of Long term.';
+  } else if(sel.value==='Loyalty'){
+    ratePct=0.01; months=24; document.getElementById('loanDuration').value=24;
+    let check=getLoyaltyEligibility();
+    if(!check.allowed) note=check.reason;
+    else if(amt>check.maxAllowed) note='Max Loyalty is LSL '+check.maxAllowed.toFixed(2)+' = (Savings LSL '+check.savings.toLocaleString()+' - Loan LSL '+check.outstanding.toFixed(2)+') / 2';
+    else if(amt>=check.savings) note='Savings must be greater than Loyalty amount. Savings LSL '+check.savings.toLocaleString()+' <= LSL '+amt.toLocaleString();
+    else note='Valid - Loyalty 24 month(s) - '+check.reason;
+    savingsInfo='Loyalty: 0.01% interest, 24 months. Max = (Savings - Outstanding Loan) / 2 = ('+check.savings.toLocaleString()+' - '+check.outstanding.toFixed(2)+') / 2 = LSL '+check.maxAllowed.toFixed(2);
+  } else {
+    ratePct=parseFloat(opt.dataset.rate); months=parseInt(document.getElementById('loanDuration').value||opt.dataset.months||12); document.getElementById('loanDuration').value=months;
+  }
+  let total=amt+(amt*ratePct/100);
+  document.getElementById('loanPreview').style.display='block';
+  document.getElementById('pTotal').innerText='LSL '+total.toFixed(2);
+  document.getElementById('pMonthly').innerText='LSL '+(total/months).toFixed(2)+' x '+months+' month(s)';
+  document.getElementById('pNote').innerText=note;
+  document.getElementById('pNote').style.color=(note.indexOf('Max')===0||note.indexOf('Emergency max')===0||note.indexOf('Must have')===0||note.indexOf('Cannot take')===0||note.indexOf('Member already')===0||note.indexOf('Long term needs')===0||note.indexOf('To qualify')===0||note.indexOf('Savings must')===0)?'#ef4444':'#22c55e';
+  document.getElementById('pSavingsInfo').innerText=savingsInfo;
+  validateLoanForm();
+}
+async function issueLoan(){
+  if(!validateLoanForm()){
+    let type=document.getElementById('loanType').value; let amt=Number(document.getElementById('loanAmount').value||0);
+    if(type==='Emergency'){ let mem=getSelectedMemberForLoan(); let check=getEmergencyEligibility(getTotalSavingsFor(mem),amt); if(amt>5000) return alert('Emergency max is LSL 5000'); if(amt>check.maxAllowed) return alert('Cannot give LSL '+amt+' Emergency. Member savings + shares: LSL '+getTotalSavingsFor(mem).toLocaleString()+' Max allowed: LSL '+check.maxAllowed+' Rule: Need Savings 1000 for 3000, 2000 for 4000, 3000 for 5000'); }
+    if(type==='Long term'){ let check=getLongTermEligibility(); if(!check.allowed) return alert(check.reason); if(amt>check.maxAllowed) return alert('Max Long term is LSL '+check.maxAllowed.toLocaleString()+' (Savings LSL '+check.savings.toLocaleString()+' x 3)'); let months=Number(document.getElementById('loanDuration').value||0); if(months<1||months>60) return alert('Long term duration must be 1 to 60 months'); }
+    if(type==='Revolving'){ let check=getRevolvingEligibility(); if(!check.allowed) return alert(check.reason); let months=Number(document.getElementById('loanDuration').value||0); if(months<1||months>60) return alert('Revolving duration must be 1 to 60 months'); }
+    if(type==='Loyalty'){ let check=getLoyaltyEligibility(); if(!check.allowed) return alert(check.reason); if(amt>check.maxAllowed) return alert('Max Loyalty is LSL '+check.maxAllowed.toFixed(2)+' = (Savings - Loan) / 2'); if(amt>=check.savings) return alert('Savings must be greater than Loyalty amount'); }
+    return alert('Please select Member, Loan Product, enter Amount, and accept Terms');
+  }
+  let id=document.getElementById('loanMemberSelect').value;
+  let sel=document.getElementById('loanType'), opt=sel.options[sel.selectedIndex], loanType=opt.value;
+  let principal=Number(document.getElementById('loanAmount').value||0);
+  let ratePct=parseFloat(opt.dataset.rate||0), rateDecimal=ratePct/100;
+  let months;
+  if(loanType==='Emergency'){
+    let mem=getSelectedMemberForLoan(); let check=getEmergencyEligibility(getTotalSavingsFor(mem),principal);
+    if(principal>5000) return alert('Emergency max is LSL 5000');
+    if(principal>check.maxAllowed) return alert('Max Emergency is LSL '+check.maxAllowed);
+    months=check.months;
+    let pend=getPending(); let hasPending=pend.some(p=>String(p.memberId)===String(id)&&p.loanType==='Emergency'&&p.status==='pending');
+    if(hasPending) return alert('This member already has 1 pending Emergency loan.');
+    if(currentLoan && currentLoan.per && currentLoan.per['emergency']){ let e=currentLoan.per['emergency']; if((e.p+e.i-e.r)>0.01) return alert('Member already has an ACTIVE Emergency loan of LSL '+(e.p+e.i-e.r).toFixed(2)+'. They must repay it first. They CAN still take other loans.'); }
+  } else if(loanType==='Long term'){
+    let check=getLongTermEligibility();
+    if(!check.allowed) return alert(check.reason);
+    if(principal>check.maxAllowed) return alert('Max Long term is LSL '+check.maxAllowed.toLocaleString()+' (Savings x 3)');
+    months=parseInt(document.getElementById('loanDuration').value||12);
+    if(months<1 || months>60) return alert('Long term duration must be 1 to 60 months');
+    let pend=getPending(); let hasPending=pend.some(p=>String(p.memberId)===String(id)&&p.loanType==='Long term'&&p.status==='pending');
+    if(hasPending) return alert('Member already has 1 pending Long term loan. Cannot take 2 Long term loans.');
+    if(currentLoan && currentLoan.per && currentLoan.per['long term']){ let lt=currentLoan.per['long term']; if((lt.p+lt.i-lt.r)>0.01) return alert('Member already has an ACTIVE Long term loan of LSL '+(lt.p+lt.i-lt.r).toFixed(2)+'. Cannot take 2 Long term loans.'); }
+  } else if(loanType==='Revolving'){
+    let check=getRevolvingEligibility();
+    if(!check.allowed) return alert(check.reason);
+    months=parseInt(document.getElementById('loanDuration').value||12);
+    if(months<1 || months>60) return alert('Revolving duration must be 1 to 60 months');
+    let pend=getPending(); let hasPending=pend.some(p=>String(p.memberId)===String(id)&&p.loanType==='Revolving'&&p.status==='pending');
+    if(hasPending) return alert('Member already has 1 pending Revolving loan. Only 1 Revolving at a time.');
+    if(currentLoan && currentLoan.per && currentLoan.per['revolving']){ let r=currentLoan.per['revolving']; if((r.p+r.i-r.r)>0.01) return alert('Member already has an ACTIVE Revolving loan of LSL '+(r.p+r.i-r.r).toFixed(2)+'. Only 1 Revolving at a time.'); }
+  } else if(loanType==='Loyalty'){
+    let check=getLoyaltyEligibility();
+    if(!check.allowed) return alert(check.reason);
+    if(principal>check.maxAllowed) return alert('Max Loyalty is LSL '+check.maxAllowed.toFixed(2)+' = (Savings - Loan) / 2');
+    if(principal>=check.savings) return alert('Savings must be greater than Loyalty amount');
+    months=24;
+    let pend=getPending(); let hasPending=pend.some(p=>String(p.memberId)===String(id)&&p.loanType==='Loyalty'&&p.status==='pending');
+    if(hasPending) return alert('Member already has 1 pending Loyalty loan. Only 1 Loyalty at a time.');
+    if(currentLoan && currentLoan.per && currentLoan.per['loyalty']){ let l=currentLoan.per['loyalty']; if((l.p+l.i-l.r)>0.01) return alert('Member already has an ACTIVE Loyalty loan. Only 1 Loyalty at a time.'); }
+  } else { months=parseInt(document.getElementById('loanDuration').value||opt.dataset.months||12); }
+  let total=principal+(principal*ratePct/100);
+  let mem=allMembers.find(x=>String(x.member_no||x.id)===String(id));
+  let pending=getPending();
+  pending.push({ id:'P'+Date.now(), memberId:id, memberName:mem?mem.name:id, loanType:loanType, amount:principal, totalToRepay:total, monthly:total/months, months:months, rate:rateDecimal, ratePct:ratePct, nextKinName:document.getElementById('nextKinName').value||'', nextKinPhone:document.getElementById('nextKinPhone').value||'', date:new Date().toISOString(), status:'pending' });
+  savePending(pending);
+  document.getElementById('loanModal').style.display='none';
+  alert('Application SUBMITTED! '+(mem?mem.name:id)+' - '+loanType+' - LSL '+principal.toFixed(2)+' Total: LSL '+total.toFixed(2)+' in '+months+' month(s)');
+  openDetail(id);
+}
+let drawing=false, lastX=0, lastY=0;
+function initSig(){
+  let c=document.getElementById('sigCanvas'); if(!c) return;
+  let ctx=c.getContext('2d'); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.lineCap='round';
+  function pos(e){ let r=c.getBoundingClientRect(); let x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; let y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:x*c.width/r.width, y:y*c.height/r.height}; }
+  c.addEventListener('mousedown',e=>{ drawing=true; let p=pos(e); lastX=p.x; lastY=p.y; });
+  c.addEventListener('mousemove',e=>{ if(!drawing) return; let p=pos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke(); lastX=p.x; lastY=p.y; });
+  window.addEventListener('mouseup',()=>drawing=false);
+  c.addEventListener('touchstart',e=>{ e.preventDefault(); drawing=true; let p=pos(e); lastX=p.x; lastY=p.y; },{passive:false});
+  c.addEventListener('touchmove',e=>{ e.preventDefault(); if(!drawing) return; let p=pos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke(); lastX=p.x; lastY=p.y; },{passive:false});
+  c.addEventListener('touchend',()=>drawing=false);
+  setTimeout(()=>{ c.width=c.offsetWidth*2; c.height=120*2; ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.lineCap='round'; },100);
+}
+function clearSig(){ let c=document.getElementById('sigCanvas'); if(!c) return; c.getContext('2d').clearRect(0,0,c.width,c.height); }
+function openRepay(){ if(!currentMember) return alert('Open a member first'); document.getElementById('repayMemberName').innerText=currentMember.name; document.getElementById('repayInfo').innerText='Outstanding: LSL '+currentLoan.total.toFixed(2)+' | Active: '+currentLoan.active; document.getElementById('repayAmount').value=''; document.getElementById('repayModal').style.display='grid'; }
+async function doRepay(){
+  let amt=Number(document.getElementById('repayAmount').value||0); if(!amt) return alert('Enter amount');
+  let loanType=document.getElementById('repayType').value; let id=currentMember.member_no||currentMember.id;
+  let res=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:id,member_no:id,type:'repayment',amount:amt,loanType:loanType,desc:'Repayment - '+loanType,date:new Date().toISOString()})});
+  if(!res.ok) return alert('Repayment FAILED');
+  let newTotal=Math.max(0,currentLoan.total-amt); document.getElementById('repayModal').style.display='none';
+  alert('Paid LSL '+amt.toFixed(2)+' ('+loanType+') New Outstanding: LSL '+newTotal.toFixed(2)); openDetail(id);
+}
+function openClearOne(){ document.getElementById('clearMenu').style.display='none'; if(!currentMember) return alert('Open a member first'); document.getElementById('clearOneName').innerText=currentMember.name; let loans=currentMemberTxs.filter(t=>(t.type||'').toLowerCase().includes('loan') && !(t.type||'').toLowerCase().includes('repay')); document.getElementById('clearOneList').innerHTML=loans.length?loans.slice().reverse().map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #334155"><div><b>${labelOf(t)} - LSL ${Number(t.amount||0).toLocaleString()}</b><div style="color:#94a3b8;font-size:12px">${(t.date||'').slice(0,10)} • ${t.desc||''}</div></div><button class="btn" style="background:#ef4444;padding:6px 12px;font-size:12px" onclick="clearOneLoan('${t.id}','${labelOf(t)}','${Number(t.amount||0)}')">Clear</button></div>`).join(''):'<p style="color:#94a3b8">No loans to clear.</p>'; document.getElementById('clearOneModal').style.display='grid'; }
+async function clearOneLoan(tid,loanType,amount){ let id=currentMember.member_no||currentMember.id; if(!confirm('Clear this ONE loan? '+loanType+' - LSL '+Number(amount).toFixed(2)+' Member: '+currentMember.name)) return; let res=await fetch('/api/transaction/'+tid+'?memberId='+id,{method:'DELETE'}); if(!res.ok) return alert('Clear FAILED'); document.getElementById('clearOneModal').style.display='none'; alert('This ONE loan cleared!'); openDetail(id); }
+async function clearByType(loanType){ document.getElementById('clearMenu').style.display='none'; if(!currentMember) return; let id=currentMember.member_no||currentMember.id; if(!confirm('Clear ALL '+loanType+' loans for '+currentMember.name+'? Other types will stay. Savings NOT deleted. Are you sure?')) return; let res=await fetch('/api/clear-loans-type',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:id,loanType:loanType})}); if(!res.ok) return alert('Clear FAILED'); alert('All '+loanType+' cleared for '+currentMember.name); openDetail(id); }
+async function clearAllLoans(){ document.getElementById('clearMenu').style.display='none'; if(!currentMember) return; let id=currentMember.member_no||currentMember.id; if(!confirm('Clear ALL loans for '+currentMember.name+'? Outstanding: LSL '+currentLoan.total.toFixed(2)+' This deletes ALL loans + repayments for THIS member only. Savings NOT deleted. Are you sure?')) return; let res=await fetch('/api/clear-loans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:id})}); if(!res.ok) return alert('Clear All FAILED'); alert('All loans cleared for '+currentMember.name); openDetail(id); }
+load(); initSig(); updateLoanBadge();
+</script>
+<div id="stmtModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;align-items:center;justify-content:center">
+<div style="background:#1a2332;color:#fff;width:360px;max-width:92%;padding:25px;border-radius:16px">
+<h3 style="text-align:center;margin:0">Download Statement</h3>
+<p style="text-align:center;color:#aaa;font-size:13px">Choose a date range for the statement.</p>
+<div style="display:flex;gap:10px">
+<div style="flex:1"><label>From</label><input type="date" id="stmtFrom" value="2026-08-01" style="width:100%;padding:10px;background:#222;color:#fff;border:1px solid #444;border-radius:8px"></div>
+<div style="flex:1"><label>To</label><input type="date" id="stmtTo" value="2026-11-17" style="width:100%;padding:10px;background:#222;color:#fff;border:1px solid #444;border-radius:8px"></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:15px">
+<button onclick="setStmtRange(1)" style="flex:1;background:#333;color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Last month</button>
+<button onclick="setStmtRange(3)" style="flex:1;background:#333;color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Last 3 months</button>
+</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button onclick="setStmtRange(6)" style="flex:1;background:#333;color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Last 6 months</button>
+<button onclick="setStmtRange(12)" style="flex:1;background:#333;color:#fff;padding:10px;border:0;border-radius:8px;cursor:pointer">Year to date</button>
+</div>
+<button onclick="downloadStmtPDF()" style="width:100%;background:#0a7a3a;color:#fff;padding:12px;border:0;border-radius:8px;margin-top:20px;cursor:pointer;font-weight:bold">📄 PDF</button>
+<button onclick="downloadStmtCSV()" style="width:100%;background:#2a3446;color:#fff;padding:12px;border:0;border-radius:8px;margin-top:10px;cursor:pointer">⬇ CSV</button>
+<button onclick="closeStmt()" style="width:100%;background:transparent;color:#fff;padding:12px;border:1px solid #555;border-radius:8px;margin-top:10px;cursor:pointer">Cancel</button>
+</div>
+</div>
+<div id="printArea" style="display:none"></div>
+<script>
+let stmtMemberId=null;
+function openStmt(){ if(currentMember) stmtMemberId=currentMember.member_no||currentMember.id; else if(window.lastOpenedMemberId) stmtMemberId=window.lastOpenedMemberId; document.getElementById('stmtModal').style.display='flex'; }
+function closeStmt(){ document.getElementById('stmtModal').style.display='none'; }
+function setStmtRange(months){ let to=new Date(); let from=new Date(); from.setMonth(to.getMonth()-months); document.getElementById('stmtFrom').value=from.toISOString().slice(0,10); document.getElementById('stmtTo').value=to.toISOString().slice(0,10); }
+function getStmtMember(){ let m=currentMember||allMembers.find(x=>String(x.member_no||x.id)===String(stmtMemberId)); if(!m) return {name:'Unknown',id:stmtMemberId,total:0,shares:0}; return {name:m.name,id:m.member_no||m.id,total:Number(m.savings||m.balance||0),shares:Number(m.shares||0),phone:m.phone||''}; }
+function getStmtTransactions(){ let all=currentMemberTxs||[]; let from=document.getElementById('stmtFrom').value; let to=document.getElementById('stmtTo').value; return all.filter(t=>{ if(!from||!to) return true; let d=(t.date||'').slice(0,10); return d>=from && d<=to; }); }
+function buildStatementHTML(){ let mem=getStmtMember(); let from=document.getElementById('stmtFrom').value; let to=document.getElementById('stmtTo').value; let txs=getStmtTransactions(); let loanTxs=txs.filter(t=>(t.type||'').toLowerCase().includes('loan')||(t.type||'').toLowerCase().includes('repay')); let html=`<div style="font-family:Arial;padding:30px;color:#000;background:#fff;max-width:800px;margin:auto"><h1 style="margin:0">P. E. SACCOS LTD</h1><h2 style="margin:5px 0 0;font-weight:normal">${mem.name} — Statement</h2><p style="color:#555">Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})} | Member No: ${mem.id} | Phone: ${mem.phone}</p><hr><table width="100%" cellpadding="6"><tr><td><b>Member:</b><br>${mem.name}</td><td><b>Period:</b><br>${from} – ${to}</td><td><b>Total Savings:</b><br>LSL ${mem.total.toLocaleString()}</td></tr><tr><td><b>Shares:</b><br>${mem.shares}</td><td><b>Active Loan Balance:</b><br>LSL ${(currentLoan?currentLoan.total:0).toFixed(2)}</td><td></td></tr></table><h3>All Transactions (${txs.length})</h3><table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:13px"><tr style="background:#f0f0f0"><th>Date</th><th>Type</th><th>Description</th><th>Amount</th></tr>`; if(!txs.length) html+=`<tr><td colspan="4" style="text-align:center">No transactions in this period</td></tr>`; txs.forEach(t=>{ html+=`<tr><td>${(t.date||'').slice(0,10)}</td><td>${t.type||''} ${t.loanType||''}</td><td>${t.desc||''}</td><td>LSL ${Number(t.amount||0).toLocaleString()}</td></tr>`; }); html+=`</table><h3>Loan Records</h3><p>Principal: LSL ${(currentLoan?currentLoan.principal:0).toFixed(2)} + Interest: LSL ${(currentLoan?currentLoan.interest:0).toFixed(2)} - Repaid: LSL ${(currentLoan?currentLoan.repaid:0).toFixed(2)} = Balance: LSL ${(currentLoan?currentLoan.total:0).toFixed(2)}</p><table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:13px"><tr style="background:#f0f0f0"><th>Type</th><th>Amount</th><th>Date</th></tr>`; loanTxs.forEach(t=>{ html+=`<tr><td>${t.type} ${t.loanType||''}</td><td>LSL ${Number(t.amount||0).toLocaleString()}</td><td>${(t.date||'').slice(0,10)}</td></tr>`; }); html+=`</table><p style="font-size:12px;color:#666;margin-top:20px">Poverty Eradication Saccos - Teyateyaneng, Lesotho</p></div>`; return html; }
+function downloadStmtPDF(){ document.getElementById('printArea').innerHTML=buildStatementHTML(); document.getElementById('printArea').style.display='block'; window.print(); document.getElementById('printArea').style.display='none'; closeStmt(); }
+function downloadStmtCSV(){ let txs=getStmtTransactions(); let mem=getStmtMember(); let csv=`Member,${mem.name},${mem.id}\nDate,Type,Description,Amount\n`; txs.forEach(t=>{ csv+=`${(t.date||'').slice(0,10)},${t.type},${(t.desc||'').replace(/,/g,' ')},${t.amount}\n`; }); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download=`Statement_${mem.id}.csv`; a.click(); closeStmt(); }
+</script>
+<style>@media print{ body *{visibility:hidden} #printArea, #printArea *{visibility:visible} #printArea{position:absolute;left:0;top:0;width:100%;display:block !important} }</style>
+<div id="recordTxModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center">
+<div style="background:#1e293b;color:#fff;width:380px;max-width:92%;padding:22px;border-radius:16px">
+<h3 style="margin:0">Record Transaction</h3>
+<p id="recordTxMemberLabel" style="color:#94a3b8;font-size:13px;margin:6px 0 12px"></p>
+<label>Member (registered)</label>
+<select id="recordTxMember" style="width:100%;padding:10px;background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px"></select>
+<label style="margin-top:10px;display:block">Type</label>
+<select id="recordTxType" style="width:100%;padding:10px;background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px"><option value="deposit">Deposit</option><option value="withdrawal">Withdrawal</option></select>
+<label style="margin-top:10px;display:block">Amount (LSL)</label>
+<input id="recordTxAmount" type="number" placeholder="e.g. 500" style="width:100%;padding:10px;background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px">
+<label style="margin-top:10px;display:block">Description</label>
+<input id="recordTxDesc" value="Monthly savings" style="width:100%;padding:10px;background:#0f172a;color:#fff;border:1px solid #334155;border-radius:8px">
+<div style="display:flex;gap:10px;margin-top:16px">
+<button onclick="saveRecordTx()" style="flex:1;background:#22c55e;color:#fff;padding:12px;border:0;border-radius:10px;cursor:pointer;font-weight:bold">Save</button>
+<button onclick="document.getElementById('recordTxModal').style.display='none'" style="flex:1;background:#e2e8f0;color:#000;padding:12px;border:0;border-radius:10px;cursor:pointer">Cancel</button>
+</div></div></div>
+<script>
+function openRecordTx(){ if(!currentMember) return alert('Open a member first'); let sel=document.getElementById('recordTxMember'); sel.innerHTML=allMembers.map(m=>`<option value="${m.member_no||m.id}">${m.name} (${m.member_no||m.id})</option>`).join(''); sel.value=currentMember.member_no||currentMember.id; document.getElementById('recordTxMemberLabel').innerText=currentMember.name+' ('+(currentMember.member_no||currentMember.id)+')'; document.getElementById('recordTxAmount').value=''; document.getElementById('recordTxDesc').value='Monthly savings'; document.getElementById('recordTxType').value='deposit'; document.getElementById('recordTxModal').style.display='flex'; }
+async function saveRecordTx(){ let id=document.getElementById('recordTxMember').value; let type=document.getElementById('recordTxType').value; let amt=Number(document.getElementById('recordTxAmount').value||0); let desc=document.getElementById('recordTxDesc').value||'Monthly savings'; if(!id) return alert('Select member'); if(!amt) return alert('Enter amount'); let mem=allMembers.find(x=>String(x.member_no||x.id)===String(id)); let currentSavings=Number(mem?(mem.savings||mem.balance||0):0); if(type==='withdrawal'){ if(amt>currentSavings) return alert('Cannot withdraw LSL '+amt+' Savings is only LSL '+currentSavings.toFixed(2)); if(!confirm('Withdraw LSL '+amt+' from '+mem.name+'? Savings will go from LSL '+currentSavings.toFixed(2)+' to LSL '+(currentSavings-amt).toFixed(2)+' Are you sure?')) return; } let res=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:id,member_no:id,type:type,amount:amt,desc:desc,date:new Date().toISOString()})}); if(!res.ok) return alert('Save FAILED'); document.getElementById('recordTxModal').style.display='none'; alert('Saved! '+(type==='withdrawal'?'Withdrawal - LSL ':'Deposit + LSL ')+amt.toFixed(2)+' for '+id); await load(); openDetail(id); }
+</script>
+</body></html>

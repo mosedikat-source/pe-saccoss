@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account - P.E. SACCOS LTD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
+body{background:#0a0e1a;color:#fff;min-height:100vh}
+.top{background:#111827;border-bottom:1px solid #1e293b;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.top b{font-size:16px}.top small{color:#64748b}
+.main{max-width:800px;margin:auto;padding:18px}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#111827;border:1px solid #1e293b;padding:18px;border-radius:14px}
+.card small{color:#64748b}.card b{font-size:24px;display:block;margin-top:6px}
+.box{background:#111827;border:1px solid #1e293b;padding:16px;border-radius:14px;margin-top:12px}
+.btn{padding:11px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px}
+.btn-green{background:#2fbd6b;color:#fff}.btn-blue{background:#3b82f6;color:#fff}.btn-gray{background:#1e293b;color:#fff;border:1px solid #334155}.btn-red{background:#ef4444;color:#fff}
+.tx-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #1e293b}
+input,select{width:100%;padding:12px;border-radius:10px;background:#0b1120;border:1px solid #1f2937;color:#fff;margin:6px 0;font-size:14px;outline:none}
+input:focus,select:focus{border-color:#22c55e}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:100;padding:16px}
+.modal-box{background:#111827;border:1px solid #1e293b;padding:20px;border-radius:16px;width:100%;max-width:440px;max-height:92vh;overflow:auto}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><div><b>🌟 P.E. SACCOS LTD</b><br><small id="hello">My Account</small></div><button class="btn btn-red" onclick="logout()">Logout</button></div>
+<div class="main">
+<h2 id="mName">Loading...</h2><p style="color:#64748b;font-size:13px;margin-top:4px" id="mMeta"></p>
+<div class="cards">
+<div class="card"><small>Total Savings</small><b id="dSavings">LSL 0</b></div>
+<div class="card"><small>Shares</small><b id="dShares">0</b></div>
+<div class="card"><small>Loan Balance</small><b id="dLoan">LSL 0.00</b><div id="dLoanInfo" style="font-size:12px;color:#64748b;margin-top:4px"></div></div>
+</div>
+<div class="box" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-green" onclick="openLoan()">+ Apply for Loan</button><button class="btn btn-blue" onclick="downloadMyStatement()">📄 My Statement</button><button class="btn btn-gray" onclick="load()">↻ Reload</button></div>
+<div class="box"><h3>My Pending Applications</h3><div id="pendingList" style="margin-top:8px">Loading...</div></div>
+<div class="box"><h3>My History</h3><div id="txHistory" style="margin-top:8px">Loading...</div></div>
+</div>
+
+<div class="modal" id="loanModal"><div class="modal-box">
+<h3 style="margin:0">Apply for Loan</h3>
+<label style="font-size:13px;color:#e2e8f0;display:block;margin:14px 0 4px">Loan Product</label>
+<select id="loanType" onchange="onProductChange()">
+  <option value="Emergency">Emergency - 5% - 1 or 3 Months</option>
+  <option value="Revolving">Revolving - 20% - 5 Months</option>
+  <option value="Long term">Long term - 30% - 5 Months</option>
+  <option value="Loyalty">Loyalty - 0.01% - 24 Months</option>
+</select>
+<label style="font-size:13px;display:block;margin:10px 0 4px">Amount (LSL)</label><input id="loanAmount" type="number" placeholder="e.g. 2000" oninput="calcLoan()">
+<label style="font-size:13px;display:block;margin:10px 0 4px">Duration (months)</label><input id="loanDuration" type="number" value="1" disabled>
+<div id="loanPreview" style="display:none;background:#0b1120;padding:12px;border-radius:10px;margin-top:10px"><div style="display:flex;justify-content:space-between"><span>Total to Repay:</span><b id="pTotal"></b></div><div style="display:flex;justify-content:space-between;margin-top:6px"><span>Monthly:</span><b id="pMonthly"></b></div><div id="pNote" style="font-size:12px;color:#fbbf24;margin-top:6px"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label style="font-size:13px;display:block;margin:10px 0 4px">Next of Kin Name</label><input id="nextKinName" placeholder="Full name"></div><div><label style="font-size:13px;display:block;margin:10px 0 4px">Next of Kin Phone</label><input id="nextKinPhone" placeholder="+266 ..."></div></div>
+<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px"><input id="termsCheck" type="checkbox" style="width:20px;margin:0"> I accept Terms & Conditions</label>
+<div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-gray" style="flex:1" onclick="closeLoan()">Cancel</button><button class="btn btn-green" style="flex:1" onclick="submitLoan()">Submit</button></div>
+</div></div>
+
+<div id="printArea" style="display:none"></div>
+<style>@media print{ body *{visibility:hidden} #printArea, #printArea *{visibility:visible} #printArea{position:absolute;left:0;top:0;width:100%;display:block !important} }</style>
+<script>
+if(localStorage.getItem('pe_role')!=='member'){ location.href='/index.html'; }
+let myId=localStorage.getItem('pe_memberId'), me=null, myTxs=[], myLoan={total:0,principal:0,interest:0,repaid:0,loanType:''};
+function rateFor(t){ t=(t||'').toLowerCase(); if(t.includes('emergency'))return 0.05; if(t.includes('long'))return 0.30; if(t.includes('revolving'))return 0.20; if(t.includes('loyalty'))return 0.0001; return 0.05; }
+function logout(){ localStorage.removeItem('pe_role'); localStorage.removeItem('pe_memberId'); localStorage.removeItem('pe_memberEmail'); localStorage.setItem('sacco_logged_in','false'); location.href='/index.html'; }
+async function load(){
+  try{
+    let r=await fetch('/api/members'); let d=await r.json(); let list=d.members||d||[];
+    me=list.find(x=>String(x.member_no||x.id)===String(myId));
+    if(!me){ document.getElementById('mName').innerText='Member not found'; return; }
+    document.getElementById('hello').innerText=me.name+' • '+myId;
+    document.getElementById('mName').innerText='Welcome, '+me.name;
+    document.getElementById('mMeta').innerText='Member No: '+myId+' • Phone: '+(me.phone||'-')+' • Email: '+(me.email||'-');
+    document.getElementById('dSavings').innerText='LSL '+Number(me.savings||me.balance||0).toLocaleString();
+    document.getElementById('dShares').innerText=Number(me.shares||0);
+    let rr=await fetch('/api/transactions?memberId='+myId); let txs=await rr.json(); myTxs=Array.isArray(txs)?txs:(txs.transactions||[]);
+    let P=0,I=0,R=0, lastType=''; myTxs.forEach(t=>{ let ty=((t.type||'')+' '+(t.desc||'')).toLowerCase(); let a=Number(t.amount||0); if(ty.includes('repay'))R+=a; else if(ty.includes('loan')){P+=a; I+=a*rateFor(ty); lastType=t.loanType||t.type||lastType;} });
+    myLoan={principal:P,interest:I,repaid:R,total:Math.max(0,P+I-R),loanType:lastType};
+    document.getElementById('dLoan').innerText='LSL '+myLoan.total.toFixed(2);
+    document.getElementById('dLoanInfo').innerText='Principal '+P.toFixed(2)+' + Interest '+I.toFixed(2)+' - Repaid '+R.toFixed(2);
+    document.getElementById('txHistory').innerHTML=myTxs.length?myTxs.slice().reverse().map(t=>`<div class="tx-row"><div><b style="text-transform:capitalize">${t.type}</b><div style="color:#64748b;font-size:12px">${t.desc||''} ${t.loanType||''} • ${(t.date||'').slice(0,10)}</div></div><b>LSL ${Number(t.amount||0).toLocaleString()}</b></div>`).join(''):'No transactions yet';
+    let pend=JSON.parse(localStorage.getItem('pendingLoans')||'[]').filter(p=>String(p.memberId)===String(myId)&&p.status==='pending');
+    document.getElementById('pendingList').innerHTML=pend.length?pend.map(p=>`<div class="tx-row"><div><b>${p.loanType} - LSL ${Number(p.amount).toLocaleString()}</b><div style="color:#64748b;font-size:12px">Total ${Number(p.totalToRepay).toLocaleString()} • Monthly ${Number(p.monthly).toLocaleString()} • Waiting for Admin</div></div><span style="color:#fbbf24">⏳ Pending</span></div>`).join(''):'No pending applications';
+  }catch(e){ document.getElementById('mName').innerText='Cannot connect to server'; }
+}
+function openLoan(){ document.getElementById('loanModal').style.display='grid'; onProductChange(); }
+function closeLoan(){ document.getElementById('loanModal').style.display='none'; }
+
+// --- LOAN RULES ---
+const LOAN_PRODUCTS = {
+  "Emergency": { rate: 0.05 },
+  "Revolving": { rate: 0.20, months: 5 },
+  "Long term": { rate: 0.30, months: 5 },
+  "Loyalty": { rate: 0.0001, months: 24 },
+};
+function getTotalSavings(){ return Number(me?.savings || me?.balance || 0) + (Number(me?.shares || 0) * 100); }
+function getEmergencyEligibility(totalSavings, wanted){
+  let buffer = totalSavings - wanted;
+  let maxAllowed = 2000;
+  if(buffer >= 3000) maxAllowed = 5000;
+  else if(buffer >= 2000) maxAllowed = 4000;
+  else if(buffer >= 1000) maxAllowed = 3000;
+  let months = wanted > 2000 ? 3 : 1;
+  return { maxAllowed, months, buffer };
+}
+function onProductChange(){
+  let type = document.getElementById('loanType').value;
+  let dur = document.getElementById('loanDuration');
+  if(type === 'Emergency'){
+    let amt = Number(document.getElementById('loanAmount').value || 0);
+    dur.value = amt > 2000 ? 3 : 1;
+  } else {
+    dur.value = LOAN_PRODUCTS[type]?.months || 1;
+  }
+  dur.disabled = true;
+  calcLoan();
+}
+// This is the ONE calc function used by both Emergency + others
+function calcLoan(){
+  let type = document.getElementById('loanType').value;
+  let amt = Number(document.getElementById('loanAmount').value || 0);
+  if(!amt || !me) return;
+  let months, rate, maxNote='';
+  if(type === 'Emergency'){
+    let check = getEmergencyEligibility(getTotalSavings(), amt);
+    months = check.months; rate = 0.05;
+    document.getElementById('loanDuration').value = months;
+    if(amt > 5000) maxNote = '❌ Emergency max is LSL 5,000';
+    else if(amt > check.maxAllowed) maxNote = '❌ With savings LSL '+getTotalSavings().toLocaleString()+', your max Emergency is LSL '+check.maxAllowed+'. Need Savings = Loan + 1000/2000/3000';
+  } else {
+    let p = LOAN_PRODUCTS[type]; if(!p) return;
+    months = p.months; rate = p.rate;
+    document.getElementById('loanDuration').value = months;
+  }
+  let total = amt + (amt * rate);
+  document.getElementById('loanPreview').style.display = 'block';
+  document.getElementById('pTotal').innerText = 'LSL ' + total.toFixed(2);
+  document.getElementById('pMonthly').innerText = 'LSL ' + (total/months).toFixed(2) + ' x ' + months + ' month(s)';
+  document.getElementById('pNote').innerText = maxNote;
+}
+// Alias so old code still works
+function calcEmergency(){ calcLoan(); }
+
+// --- THIS IS THE FIX: submitLoan() NOW EXISTS ---
+function submitLoan(){
+  try{
+    let type = document.getElementById('loanType').value;
+    let amt = Number(document.getElementById('loanAmount').value || 0);
+    if(!type) return alert('Select loan product');
+    if(!amt || amt <= 0) return alert('Enter amount');
+    if(!document.getElementById('termsCheck').checked) return alert('Accept Terms - tick the checkbox');
+    if(!me) return alert('Member not loaded yet, click Reload');
+
+    let totalSavings = getTotalSavings();
+    let months, rate, total;
+
+    if(type === 'Emergency'){
+      if(amt > 5000) return alert('❌ Emergency max is LSL 5,000');
+      let check = getEmergencyEligibility(totalSavings, amt);
+      if(amt > check.maxAllowed) return alert('❌ Your max Emergency is LSL ' + check.maxAllowed + ' with savings LSL ' + totalSavings.toLocaleString());
+      months = check.months; rate = 0.05; total = amt + (amt * rate);
+      let pend = JSON.parse(localStorage.getItem('pendingLoans') || '[]');
+      let hasPending = pend.some(x => String(x.memberId) === String(myId) && x.loanType === 'Emergency' && x.status === 'pending');
+      if(hasPending) return alert('❌ You already have 1 pending Emergency loan.');
+      if(myLoan && myLoan.loanType === 'Emergency' && myLoan.total > 0.01) return alert('❌ You already have an active Emergency loan. Repay it first. You CAN still take other loans.');
+      pend.push({id:'P'+Date.now(), memberId:myId, memberName:me.name, loanType:'Emergency', amount:amt, totalToRepay:total, monthly:total/months, months:months, rate:rate, ratePct:5, nextKinName:document.getElementById('nextKinName').value||'', nextKinPhone:document.getElementById('nextKinPhone').value||'', date:new Date().toISOString(), status:'pending'});
+      localStorage.setItem('pendingLoans', JSON.stringify(pend));
+      closeLoan(); alert('✅ Emergency sent! Total: LSL ' + total.toFixed(2) + ' in ' + months + ' month(s)'); load(); return;
+    }
+
+    // Other loans
+    let p = LOAN_PRODUCTS[type]; if(!p) return alert('Unknown loan type');
+    months = p.months; rate = p.rate; total = amt + (amt * rate);
+    let pend2 = JSON.parse(localStorage.getItem('pendingLoans') || '[]');
+    pend2.push({id:'P'+Date.now(), memberId:myId, memberName:me.name, loanType:type, amount:amt, totalToRepay:total, monthly:total/months, months:months, rate:rate, nextKinName:document.getElementById('nextKinName').value||'', nextKinPhone:document.getElementById('nextKinPhone').value||'', date:new Date().toISOString(), status:'pending'});
+    localStorage.setItem('pendingLoans', JSON.stringify(pend2));
+    closeLoan(); alert('✅ ' + type + ' sent! Total: LSL ' + total.toFixed(2)); load();
+  }catch(e){ alert('Submit Error: ' + e.message); console.log(e); }
+}
+// Alias
+function submitEmergencyLoan(){ submitLoan(); }
+
+function downloadMyStatement(){
+  let fmt=(x)=>x.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  let html=`<div style="font-family:Arial;color:#000;background:#fff;padding:30px;max-width:800px;margin:auto"><h1 style="margin:0">P. E. SACCOS LTD</h1><h2>My Statement — ${me.name}</h2><p>Generated: ${fmt(new Date())} | Member No: ${myId} | Phone: ${me.phone||''} | Email: ${me.email||''}</p><hr><table width="100%" cellpadding="6"><tr><td><b>Total Savings:</b><br>LSL ${Number(me.savings||0).toLocaleString()}</td><td><b>Shares:</b><br>${me.shares||0}</td><td><b>Loan Balance:</b><br>LSL ${myLoan.total.toFixed(2)}</td></tr></table><h3>All Transactions (${myTxs.length})</h3><table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse:collapse;font-size:13px"><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th></tr>${myTxs.map(t=>`<tr><td>${(t.date||'').slice(0,10)}</td><td>${t.type} ${t.loanType||''}</td><td>${t.desc||''}</td><td>LSL ${Number(t.amount||0).toLocaleString()}</td></tr>`).join('')||'<tr><td colspan="4">No transactions</td></tr>'}</table><p style="font-size:12px;color:#666;margin-top:16px">Poverty Eradication Saccos - Teyateyaneng, Lesotho</p></div>`;
+  document.getElementById('printArea').innerHTML=html; document.getElementById('printArea').style.display='block'; window.print(); document.getElementById('printArea').style.display='none';
+}
+load();
+</script></body></html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Members - SACCO</title>
+<style>
+body{margin:0;background:#0f172a;color:white;font-family:Inter,Arial,sans-serif;padding:20px;overflow:auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.btn-blue{background:#3b82f6;color:white}
+.btn-green{background:#22c55e;color:white}
+.btn-gray{background:#334155;color:white}
+#search{width:100%;padding:10px;border-radius:8px;background:#1e293b;border:1px solid #334155;color:white}
+.member-item{background:#1e293b;border:1px solid #2d3a52;padding:12px 16px;margin:8px 0;border-radius:12px;display:flex;justify-content:space-between;align-items:center}
+.avatar{width:42px;height:42px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px}
+#memberDetail{position:fixed;top:0;right:0;width:380px;height:100%;background:#1a2533;border-left:1px solid #2d3a52;padding:20px;overflow-y:auto;display:none;z-index:9000}
+#dInitial{width:64px;height:64px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin-bottom:10px}
+#txModal{position:fixed;top:20px;right:20px;width:380px;max-height:90vh;overflow-y:auto;z-index:10000;background:transparent;display:none}
+#txModal .box{background:#1a2533;border:1px solid #2d3a52;border-radius:16px;padding:20px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+input,select{width:100%;padding:9px;margin:6px 0;border-radius:8px;background:#0f172a;color:white;border:1px solid #334155;box-sizing:border-box}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h2 style="margin:0">Members <span id="count" style="font-size:14px;color:#94a3b8"></span></h2>
+<div>
+<button class="btn btn-gray" onclick="load()">Reload</button>
+<button class="btn btn-blue" onclick="location.href='dashboard.html'">Dashboard</button>
+</div>
+</div>
+
+<input id="search" placeholder="Search by name or number..." oninput="filterMembers()">
+
+<div id="memberList" style="margin-top:15px"></div>
+
+<!-- Member Detail with Icons/Circles (your original design) -->
+<div id="memberDetail">
+<div id="dInitial">M</div>
+<h3 id="dName" style="margin:5px 0">Name</h3>
+<p style="color:#94a3b8">ID: <span id="dNo">M000</span></p>
+<p id="dPhone">Phone: -</p>
+<p id="dEmail">Email: -</p>
+<p>Savings: <b id="dSavings">LSL 0.0</b></p>
+<p>Loan Balance: <b id="dLoanBalance" style="color:#fbbf24">LSL 0.00</b></p>
+<div id="dLoanBreakdown" style="font-size:12px;color:#94a3b8;margin-top:-8px;margin-bottom:8px"></div>
+<div style="margin-top:15px;border-top:1px solid #2d3a52;padding-top:10px">
+<h4 style="margin:5px 0;font-size:13px;color:#94a3b8">Transaction History</h4>
+<div id="txHistory" style="max-height:200px;overflow-y:auto;font-size:12px"></div>
+</div>
+<div style="margin-top:20px;display:flex;gap:10px">
+<div style="display:flex;gap:10px;margin-top:20px">
+  <button onclick="openLoan()" style="flex:1;background:#fbbf24;color:#422006;font-weight:800;padding:12px;border-radius:12px;border:none;cursor:pointer">Loan</button>
+  <button onclick="openTx()" style="flex:1;background:#22c55e;color:white;font-weight:700;padding:12px;border-radius:12px;border:none;cursor:pointer">Transaction</button>
+  <button onclick="closeDetail()" style="flex:1;background:#94a3b8;color:#334155;font-weight:700;padding:12px;border-radius:12px;border:none;cursor:pointer">Close</button>
+</div>
+</div>
+</div>
+
+<!-- Transaction Modal - SIDE POPUP so you can scroll members -->
+<div id="txModal">
+<div class="box">
+<h3 style="margin-top:0">Record Transaction</h3>
+<div id="txMemberName" style="color:#94a3b8;font-size:13px;margin-bottom:10px">Select member</div>
+
+<label style="font-size:12px;color:#94a3b8">Member (registered)</label>
+<select id="txMemberSelect"></select>
+
+<label style="font-size:12px;color:#94a3b8">Type</label>
+<select id="txType"><option>Deposit</option><option>Withdrawal</option></select>
+
+<label style="font-size:12px;color:#94a3b8">Amount (LSL)</label>
+<input id="txAmount" type="number" placeholder="e.g. 500">
+
+<label style="font-size:12px;color:#94a3b8">Description</label>
+<input id="txDesc" placeholder="Monthly savings">
+
+<div style="display:flex;gap:10px;margin-top:15px">
+<button class="btn btn-green" style="flex:1" onclick="recordTx()">Save</button>
+<button class="btn btn-gray" style="flex:1" onclick="closeTx()">Cancel</button>
+</div>
+</div>
+</div>
+
+<script>
+let allMembers=[];
+
+async function load(){
+ try{
+  const res=await fetch('/api/members');
+  const data=await res.json();
+  allMembers=data.members||data||[];
+        // === FIX: Apply repayments from loans.html ===
+      try{
+        let reps = JSON.parse(localStorage.getItem('sacco_admin_repayments')||'[]');
+        reps.forEach(r=>{
+          let mm = allMembers.find(x=>x.id===r.id);
+          if(mm){
+            let already = Number(mm._repayApplied||0);
+            let totalForMember = reps.filter(x=>x.id===r.id).reduce((s,x)=>s+Number(x.amount||0),0);
+            if(already < totalForMember){
+              let diff = totalForMember - already;
+              mm.loanBalance = Math.max(0, Number(mm.loanBalance||mm.loan||0) - diff);
+              mm._repayApplied = totalForMember;
+            }
+          }
+        });
+      }catch(e){}
+    document.getElementById('count').innerText=`(${allMembers.length})`;
+  render(allMembers);
+ }catch(e){
+  document.getElementById('memberList').innerHTML='<p style="color:#f87171">Cannot connect to server. Run node server.js</p>';
+ }
+}
+
+function render(list){
+ const html=list.map(m=>{
+  const name=m.name||'Unknown';
+  const no=m.member_no||m.id||m.memberNo||'';
+  const phone=m.phone||'';
+  const initials=(name||'M').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+  const safeName=name.replace(/'/g,"\\'");
+  return `<div class="member-item">
+    <div style="display:flex;align-items:center">
+      <div class="avatar">${initials}</div>
+      <div><b>${name}</b><div style="color:#94a3b8;font-size:12px">${no} • ${phone}</div></div>
+    </div>
+    <div>
+      <button class="btn btn-gray" style="padding:6px 10px" onclick="openDetail('${no}')">View</button>
+      <button class="btn btn-green" style="padding:6px 10px" onclick="openTx('${safeName}','${no}')">Tx</button>
+    </div>
+  </div>`;
+ }).join('');
+ document.getElementById('memberList').innerHTML=html||'No members';
+}
+
+function filterMembers(){
+ const q=document.getElementById('search').value.toLowerCase();
+ render(allMembers.filter(m=>(m.name||'').toLowerCase().includes(q)||String(m.member_no||m.id||'').toLowerCase().includes(q)));
+}
+async function openDetail(id){
+ const m=allMembers.find(x=>String(x.member_no||x.id||x.memberNo)===String(id));
+ if(!m) return;
+ document.getElementById('dInitial').innerText=(m.name||'M').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+ document.getElementById('dName').innerText=m.name;
+ document.getElementById('dNo').innerText=m.member_no||m.id;
+ document.getElementById('dPhone').innerText='Phone: '+(m.phone||'-');
+ document.getElementById('dEmail').innerText='Email: '+(m.email||'No email');
+ document.getElementById('dSavings').innerText='LSL '+(m.savings||m.balance||'0.0');
+ document.getElementById('dLoanBalance').innerText='LSL 0.00';
+document.getElementById('dLoanBreakdown').innerText='';
+ document.getElementById('memberDetail').style.display='block';
+
+ // Load transactions for this member
+ const hist=document.getElementById('txHistory');
+ hist.innerHTML='Loading...';
+ try{
+  const res=await fetch('/api/transactions?memberId='+id);
+  const data=await res.json();
+  const txs=data.transactions||data||[];
+  // TOTAL LOAN BALANCE WITH INTEREST
+let principal=0;
+let totalInterest=0;
+let totalRepaid=0;
+txs.forEach(t=>{
+  const ty=((t.type||'')+' '+(t.desc||'')+' '+(t.category||'')).toLowerCase();
+  const amt=Number(t.amount||0);
+  if(ty.includes('repay')) {
+    totalRepaid+=amt;
+  } else if(ty.includes('loan')) {
+    principal+=amt;
+    let rate=0;
+    if(ty.includes('emergency')) rate=0.05; // Emergency 5%
+    else if(ty.includes('long')) rate=0.30; // Long-term 30%
+    else if(ty.includes('revolving')) rate=0.20; // Revolving 20%
+    else if(ty.includes('loyalty')) rate=0.0001; // Loyalty 0.01%
+    totalInterest+=amt*rate;
+  }
+});
+let totalLoan=principal+totalInterest-totalRepaid;
+document.getElementById('dLoanBalance').innerText='LSL '+totalLoan.toFixed(2);
+document.getElementById('dLoanBreakdown').innerText='Principal LSL '+principal.toFixed(2)+' + Interest LSL '+totalInterest.toFixed(2)+' - Repaid LSL '+totalRepaid.toFixed(2);
+  if(txs.length===0){ hist.innerHTML='<div style="color:#64748b">No transactions yet</div>'; return; }
+  hist.innerHTML=txs.slice().reverse().map(t=>{
+    const isDeposit = (t.type||'').toLowerCase()==='deposit';
+    return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e293b">
+      <span><span style="color:${isDeposit?'#22c55e':'#ef4444'}">${t.type}</span> ${t.desc||''}</span>
+      <span><b>LSL ${t.amount}</b> <small style="color:#64748b">${(t.date||'').slice(0,10)}</small></span>
+    </div>`;
+  }).join('');
+ }catch(e){
+  hist.innerHTML='<div style="color:#64748b">No history API - showing local</div>';
+ }
+}
+function closeDetail(){ document.getElementById('memberDetail').style.display='none'; }
+
+async function loadMembersIntoDropdown(){
+ const sel=document.getElementById('txMemberSelect');
+ if(!sel) return;
+ sel.innerHTML='';
+ allMembers.forEach(m=>{
+  const opt=document.createElement('option');
+  opt.value=m.member_no||m.id||m.memberNo;
+  opt.textContent=`${m.name} (${opt.value})`;
+  sel.appendChild(opt);
+ });
+}
+
+function openTx(name,id){
+ let memberName=name;
+ let memberId=id;
+ if(!memberName){
+  memberName=document.getElementById('dName')?.innerText||'Member';
+  memberId=document.getElementById('dNo')?.innerText||'';
+ }
+ document.getElementById('txMemberName').innerText=memberName+' '+(memberId||'');
+ loadMembersIntoDropdown();
+ const modal=document.getElementById('txModal');
+ modal.style.display='block';
+ document.body.style.overflow='auto';
+ setTimeout(()=>{ if(memberId) document.getElementById('txMemberSelect').value=memberId; },100);
+}
+function closeTx(){ document.getElementById('txModal').style.display='none'; }
+async function recordTx(){
+ const type=document.getElementById('txType').value;
+ const amount=parseFloat(document.getElementById('txAmount').value);
+ if(!amount){ alert('Enter Amount'); return; }
+ const memberId=document.getElementById('txMemberSelect').value;
+ const desc=document.getElementById('txDesc').value;
+
+ try{
+  // Save transaction
+  await fetch('/api/transaction',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({memberId,amount,type,desc,date:new Date().toISOString()})
+  });
+  // Update member savings in backend
+  await fetch('/api/members/'+memberId+'/balance',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({amount,type})
+  });
+ }catch(e){}
+
+ // Update local list instantly
+ const m=allMembers.find(x=>String(x.member_no||x.id)===String(memberId));
+ if(m){
+  let cur=parseFloat(m.savings||m.balance||0);
+  if(type.toLowerCase()==='deposit') cur+=amount; else cur-=amount;
+  m.savings=cur; m.balance=cur;
+  if(String(document.getElementById('dNo').innerText)===String(memberId)){
+    document.getElementById('dSavings').innerText='LSL '+cur.toFixed(1);
+  }
+  render(allMembers);
+ }
+
+ closeTx();
+ alert(type+' LSL '+amount+' recorded for '+memberId);
+ document.getElementById('txAmount').value='';
+ document.getElementById('txDesc').value='';
+ 
+ // Re-open detail to show new history if detail is open
+ if(document.getElementById('memberDetail').style.display==='block'){
+   openDetail(memberId);
+ }
+}
+load();
+</script>
+<!-- LOAN MODAL - Shows member + types + duration + amount -->
+<div id="loanModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:1000">
+  <div style="background:#1e293b;border-radius:16px;padding:20px;width:92%;max-width:400px;color:#fff;font-family:sans-serif">
+    
+    <!-- SHOW MEMBER -->
+    <h3 style="margin:0">Loan for <span id="loanMemberName" style="color:#fbbf24">Poverty</span></h3>
+    <p id="loanMemberId" style="color:#94a3b8;font-size:13px;margin:4px 0 14px 0">ID: M201</p>
+
+    <!-- LOAN TYPES + DURATION -->
+    <label style="font-size:13px;color:#cbd5e1">Loan Type & Duration</label>
+    <select id="loanType" onchange="calcLoan()" style="width:100%;padding:12px;margin:6px 0 12px 0;border-radius:10px;background:#0f172a;color:#fff;border:1px solid #334155">
+      <option value="">-- Select Loan Type --</option>
+      <option value="Emergency" data-rate="5" data-months="1">Emergency - 5% - 1 Month</option>
+      <option value="Long term" data-rate="30" data-months="5">Long term - 30% - 5 Months</option>
+      <option value="Revolving" data-rate="20" data-months="5">Revolving - 20% - 5 Months</option>
+      <option value="Loyalty" data-rate="0.01" data-months="24">Loyalty benefit - 0.01% - 24 Months</option>
+    </select>
+
+    <!-- INPUT LOAN AMOUNT -->
+    <label style="font-size:13px;color:#cbd5e1">Loan Amount (LSL)</label>
+    <input id="loanAmount" type="number" oninput="calcLoan()" placeholder="Enter amount e.g 750" style="width:100%;padding:12px;margin:6px 0;border-radius:10px;background:#0f172a;color:#fff;border:1px solid #334155">
+
+    <!-- AUTO PREVIEW -->
+    <div id="loanPreview" style="background:#0f172a;border-radius:10px;padding:12px;margin:10px 0;display:none">
+      <div style="display:flex;justify-content:space-between;margin:4px 0"><span>Member:</span><b id="pMember">-</b></div>
+      <div style="display:flex;justify-content:space-between;margin:4px 0"><span>Duration:</span><b id="pDuration">-</b></div>
+      <div style="display:flex;justify-content:space-between;margin:4px 0"><span>Interest:</span><b id="pRate">-</b></div>
+      <div style="display:flex;justify-content:space-between;margin:4px 0"><span>Total to Repay:</span><b id="pTotal" style="color:#fbbf24">-</b></div>
+      <div style="display:flex;justify-content:space-between;margin:4px 0"><span>Monthly:</span><b id="pMonthly">-</b></div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button onclick="issueLoan()" style="flex:1;background:#fbbf24;color:#422006;font-weight:800;padding:12px;border-radius:10px;border:none;cursor:pointer">Issue Loan</button>
+      <button onclick="closeLoan()" style="flex:1;background:#334155;color:#fff;padding:12px;border-radius:10px;border:none;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// OPEN LOAN - Show member + types
+function openLoan(){
+  const name = document.getElementById('dName').innerText;
+  const id = document.getElementById('dNo').innerText;
+  document.getElementById('loanMemberName').innerText = name;
+  document.getElementById('loanMemberId').innerText = id;
+  document.getElementById('pMember').innerText = name;
+  document.getElementById('loanModal').style.display='grid';
+  document.getElementById('loanPreview').style.display='none';
+  document.getElementById('loanAmount').value='';
+  document.getElementById('loanType').selectedIndex=0;
+}
+function closeLoan(){ document.getElementById('loanModal').style.display='none'; }
+
+function calcLoan(){
+  const sel = document.getElementById('loanType');
+  const opt = sel.options[sel.selectedIndex];
+  const rate = parseFloat(opt.dataset.rate||0);
+  const months = parseInt(opt.dataset.months||0);
+  const amt = parseFloat(document.getElementById('loanAmount').value||0);
+  if(!amt || !months) return;
+  const total = amt + (amt * rate / 100);
+  document.getElementById('loanPreview').style.display='block';
+  document.getElementById('pDuration').innerText = months + ' month(s)';
+  document.getElementById('pRate').innerText = rate + '%';
+  document.getElementById('pTotal').innerText = 'LSL ' + total.toFixed(2);
+  document.getElementById('pMonthly').innerText = 'LSL ' + (total/months).toFixed(2);
+}
+
+async function issueLoan(){
+  const totalEl = document.getElementById('ptotal');
+  let add = parseInt((totalEl?.innerText||'').replace(/[^0-9]/g,'')) || 0;
+  if(!add) add = Number(document.getElementById('loanAmount')?.value)||0;
+  if(!add) return alert('Enter loan amount');
+
+  const mem = window.currMember || currMember;
+  if(!mem) return alert('Open member first');
+
+  // Use member_no like recordTx does - this is what server expects
+  const realId = mem.member_no || mem._id || mem.id;
+  const sel = document.getElementById('loanType');
+  const opt = sel?.options[sel.selectedIndex];
+  const loanType = opt?.value || sel?.value || 'Emergency';
+  const rate = opt?.dataset?.rate || '';
+  const months = opt?.dataset?.months || document.getElementById('loanMonths')?.value || '';
+
+  console.log('Saving loan for:', realId, add, loanType);
+
+  try{
+    const res = await fetch('/api/transactions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        memberId: realId,
+        member_no: realId,
+        type: 'loan', // same as 'deposit' in recordTx
+        amount: add, // Total to Repay from #ptotal - your calcLoan already includes interest
+        principal: Number(document.getElementById('loanAmount')?.value)||add,
+        loanType: loanType,
+        rate: rate,
+        months: months,
+        desc: 'Loan - ' + loanType,
+        date: new Date().toISOString()
+      })
+    });
+    const data = await res.json();
+    console.log('Server reply:', data);
+    if(!res.ok) throw new Error(data.error || JSON.stringify(data));
+
+    alert('Loan saved! LSL ' + add);
+    closeLoan();
+    // Reload like savings does
+    openDetail(realId);
+  }catch(e){
+    console.error(e);
+    alert('Loan NOT saved: ' + e.message);
+  }
+}
+// TOTAL LOAN BALANCE FOR ONE MEMBER
+function getTotalLoanBalance(member) {
+  let total = 0;
+  const txns = member.transactions || member.history || [];
+  txns.forEach(t => {
+    const type = (t.type || t.category || t.name || "").toLowerCase();
+    const amt = Number(t.amount || 0);
+    if (type.includes("loan") && !type.includes("repay") && !type.includes("payment")) {
+      total += amt;
+    }
+    if (type.includes("repay") || type.includes("repayment") || type.includes("loan payment")) {
+      total -= amt;
+    }
+  });
+  // fallback if you store it directly
+  if (total === 0 && member.loanBalance) total = Number(member.loanBalance);
+  return total;
+}
+</script>
+<script>
+// === OVERRIDE ISSUE LOAN - READS MEMBER FROM MODAL ITSELF ===
+window.issueLoan = async function(){
+  console.log('Issue Loan clicked - override');
+  try{
+    // 1. Amount = Total to Repay from modal (5200 in your screenshot)
+    let totalText = document.getElementById('ptotal')?.innerText || '';
+    let total = parseInt(totalText.replace(/[^0-9]/g,'')) || 0;
+    let principal = Number(document.getElementById('loanAmount')?.value) || 0;
+    if(!total) total = principal;
+    if(!total) return alert('Enter loan amount');
+    console.log('Total:', total, 'Principal:', principal);
+
+    // 2. Member ID - try EVERY place your original code stores it
+    let realId = null;
+
+// From currMember object ONLY - not window element
+let m = window.currMember || window.currentMember || null;
+if(m && typeof m === 'object' && !m.tagName) realId = m.member_no || m._id || m.id || null;
+
+// From modal text "Loan for Mosedi Katleho / M202" - this is 100% reliable
+if(!realId){
+  let modalText = document.getElementById('loanModal')?.innerText || '';
+  let match = modalText.match(/M\d+/);
+  if(match) realId = match[0];
+}
+
+// Safety: if it's still an element, turn it into text
+if(realId && typeof realId === 'object'){
+  realId = realId.innerText || realId.textContent || realId.value || '';
+}
+realId = String(realId||'').trim();
+console.log('Member ID found:', realId);
+if(!realId) return alert('Could not find member ID. Close modal, click member again, then Loan.');
+    realId = String(realId||'').trim();
+    console.log('Member ID found:', realId);
+    if(!realId || realId==='Member') return alert('Could not find member ID. Close modal, click member again, then Loan.');
+
+    // 3. Loan Type
+    let sel = document.getElementById('loanType');
+    let opt = sel?.options[sel.selectedIndex];
+    let loanType = opt?.value || sel?.value || 'Long term';
+
+    // 4. Send EXACTLY like your working Deposit does
+    const res = await fetch('/api/transaction', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        memberId: realId,
+        member_no: realId,
+        type: 'loan',
+        amount: total,
+        principal: principal,
+        loanType: loanType,
+        desc: 'Loan - ' + loanType,
+        date: new Date().toISOString()
+      })
+    });
+    const data = await res.json();
+    console.log('Server reply:', data);
+    if(!res.ok) throw new Error(data.error || JSON.stringify(data));
+
+    alert('Loan SAVED! LSL ' + total + ' for ' + realId);
+
+    // 5. Close modal - direct, no function name needed
+    let lm = document.getElementById('loanModal');
+    if(lm) lm.style.display = 'none';
+
+    // 6. Reload detail - try all names
+    if(typeof openDetail === 'function') openDetail(realId);
+    else if(typeof openMember === 'function') openMember(realId);
+    else if(typeof load === 'function') load();
+    else location.reload();
+
+  }catch(e){
+    console.error(e);
+    alert('Loan FAILED: ' + e.message + '\nCheck: 1) server.js has loan fix 2) node server.js is running');
+  }
+};
+
+// Re-bind the yellow button by its text, in case onclick was lost
+setTimeout(()=>{
+  document.querySelectorAll('button').forEach(b=>{
+    if(b.innerText.trim().toLowerCase().includes('issue loan')){
+      console.log('Bound Issue Loan button');
+      b.onclick = window.issueLoan;
+    }
+  });
+}, 500);
+
+</script>
+</body>
+</html>

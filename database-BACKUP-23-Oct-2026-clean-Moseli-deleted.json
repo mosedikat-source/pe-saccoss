@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "email": "mosedikat@gmail.com",
+      "password": "admin123",
+      "role": "admin",
+      "name": "Admin"
+    }
+  ],
+  "members": [
+    {
+      "name": "",
+      "phone": "",
+      "village": "Lesotho",
+      "id": 1792735586638
+    }
+  ],
+  "savings": [],
+  "loans": [],
+  "products": [
+    {
+      "name": "Emergency Loan",
+      "rate": 10,
+      "months": 3
+    },
+    {
+      "name": "Business Loan",
+      "rate": 15,
+      "months": 12
+    }
+  ]
+}

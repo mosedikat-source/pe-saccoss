@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up - P. E. SACCOS LTD</title>
+<style>
+body{margin:0;background:#0f172a;font-family:Arial}
+.login-wrap{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.login-card{background:#1e293b;padding:32px;border-radius:16px;width:100%;max-width:420px;color:white}
+.login-card h2{text-align:center;margin:0 0 6px}
+.sub{color:#94a3b8;text-align:center;margin-bottom:18px;font-size:13px}
+label{font-size:13px;color:#cbd5e1;margin:10px 0 4px;display:block}
+.login-card input, .login-card select{width:100%;padding:12px;margin:0 0 8px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:white;box-sizing:border-box}
+.btn{width:100%;padding:13px;margin-top:16px;border:none;border-radius:10px;background:#4ade80;color:#052e16;font-weight:bold;font-size:16px;cursor:pointer}
+.btn:hover{background:#22c55e}
+.link{color:#4ade80;text-align:center;margin-top:14px;cursor:pointer;display:block;text-decoration:none;font-size:14px}
+#msg{text-align:center;margin-top:10px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+<div class="login-card">
+<h2>P. E. SACCOS LTD</h2>
+<div class="sub">Create new member account</div>
+
+<label>Full Name</label>
+<input id="regName" placeholder="e.g. Katleho Mosedik">
+
+<label>Email</label>
+<input id="regEmail" placeholder="e.g. example@gmail.com">
+
+<label>Phone Number</label>
+<input id="regPhone" placeholder="e.g. 5876xxxx">
+
+<label>ID Number</label>
+<input id="regId" placeholder="e.g. 1234567890123">
+
+<label>Gender</label>
+<select id="regGender">
+<option value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+<option value="Other">Other</option>
+</select>
+
+<label>Password</label>
+<input id="regPass" type="password" placeholder="Create password">
+
+<button class="btn" onclick="doRegister()">Sign Up</button>
+
+<a class="link" href="/">Already have account? Log in</a>
+<p id="msg"></p>
+</div>
+</div>
+
+<script>
+async function doRegister(){
+ const name=document.getElementById('regName').value.trim();
+ const email=document.getElementById('regEmail').value.trim();
+ const phone=document.getElementById('regPhone').value.trim();
+ const idNumber=document.getElementById('regId').value.trim();
+ const gender=document.getElementById('regGender').value;
+ const password=document.getElementById('regPass').value;
+ if(!name||!email||!phone||!idNumber||!gender||!password){alert('Please fill ALL fields');return}
+ document.getElementById('msg').innerText='Creating account...';
+ try{
+  const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,idNumber,gender,password})});
+  const data=await res.json();
+  if(res.ok){alert('SUCCESS! '+name+' registered');window.location.href='/';}
+  else{document.getElementById('msg').innerText='';alert(data.error||'Failed');}
+ }catch(e){document.getElementById('msg').innerText='';alert('Server not running!');}
+}
+</script>
+</body>
+</html>

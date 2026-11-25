@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loans - P.E. SACCOS LTD</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#fff;font-family:Arial;display:flex;min-height:100vh}
+.sidebar{width:250px;background:#020617;padding:18px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.sidebar a{display:flex;align-items:center;gap:8px;color:#cbd5e1;text-decoration:none;padding:10px;border-radius:8px;margin:4px 0;font-size:14px}
+.sidebar a.on,.sidebar a:hover{background:#1e293b;color:#fff}
+.sidebar .label{color:#64748b;font-size:12px;margin:18px 0 6px}
+.loan-badge{margin-left:auto;width:24px;height:24px;min-width:24px;background:#f59e0b;color:#000;font-weight:800;font-size:12px;border-radius:50%;display:none;align-items:center;justify-content:center;flex-shrink:0}
+.main{flex:1;padding:20px;overflow:auto}
+.btn{padding:10px 16px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer}
+.btn-green{background:#22c55e;border:none;font-weight:bold}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0}
+.card{background:#1e293b;padding:16px;border-radius:12px}.card small{color:#94a3b8}.card b{font-size:22px;display:block;margin-top:8px}
+.box{background:#1e293b;padding:16px;border-radius:12px;margin-bottom:12px}
+input,select{padding:10px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;width:100%}
+table{width:100%;border-collapse:collapse;margin-top:12px;min-width:800px}
+th{color:#94a3b8;text-align:left;padding:10px 6px;border-bottom:1px solid #334155}
+td{padding:12px 6px;border-bottom:1px solid #334155;vertical-align:top}
+.st{padding:4px 10px;border-radius:20px;font-size:12px}.Active{background:#22c55e33;color:#22c55e}.Paid{background:#60a5fa33;color:#60a5fa}.Pending{background:#f59e0b33;color:#f59e0b}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:99}
+.modal-box{background:#1e293b;padding:22px;border-radius:14px;width:400px;max-width:92%}
+.modal-box label{display:block;font-size:12px;color:#94a3b8;margin:12px 0 4px}
+.clear-wrap{position:relative}
+.clear-menu{position:absolute;top:46px;right:0;background:#1e293b;border:1px solid #334155;border-radius:12px;width:280px;display:none;z-index:2000;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.clear-opt{display:block;width:100%;text-align:left;padding:12px 14px;background:none;border:none;color:#fff;cursor:pointer;font-size:14px;border-bottom:1px solid #1e293b}
+.clear-opt:hover{background:#334155}
+.clear-opt.danger{color:#fca5a5;font-weight:700}
+.clear-opt small{color:#94a3b8;display:block;font-weight:400}
+.btn-approve{background:#22c55e;border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn-reject{background:#ef4444;border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+@media(max-width:900px){.sidebar{display:none}.cards{grid-template-columns:1fr}}
+</style></head><body>
+<div class="sidebar"><h3 style="margin:0">🌟 P.E. SACCOS LTD</h3><small style="color:#94a3b8">mosedikat@gm... • admin</small>
+<div class="label">Menu</div>
+<a href="dashboard.html">⊞ Dashboard</a>
+<a href="staff-dashboard.html">▦ Staff Dashboard</a>
+<a href="members.html">👥 Members</a>
+<a href="savings.html">🐷 Savings</a>
+<a href="loans.html" class="on">🏦 Loans <span id="loanBadge" class="loan-badge">0</span></a>
+<a href="loan-products.html">📦 Loan Products</a>
+<a href="loan-calculator.html">🧮 Loan Calculator</a>
+<a href="dividends.html">💰 Dividends</a>
+<a href="reports.html">📄 Reports</a>
+<div class="label">System</div>
+<a href="repayment-audit.html">📋 Repayment Audit</a>
+<a href="settings.html">⚙ Settings</a>
+<a href="#" style="margin-top:20px">↩ Logout</a></div>
+<div class="main">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px"><div><h2 style="margin:0">Loans</h2><p style="color:#94a3b8">Manage loan disbursements and repayments</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="downloadLoanStatement()" style="background:#3b82f6;border:none;font-weight:700">📄 Download Loan Statement</button><div class="clear-wrap"><button class="btn" style="background:#ef4444;border:none;font-weight:700" onclick="toggleClearMenu(event)">🗑️ Clear Loans ▼</button><div class="clear-menu" id="clearMenu"><button class="clear-opt" onclick="openClearTop('one')">🗑️ Clear One Loan...<small>Pick member + one loan</small></button><button class="clear-opt" onclick="openClearTop('Emergency')">🗑️ Clear Emergency<small>Pick member, clear Emergency only</small></button><button class="clear-opt" onclick="openClearTop('Long term')">🗑️ Clear Long term<small>Pick member, clear Long term only</small></button><button class="clear-opt" onclick="openClearTop('Revolving')">🗑️ Clear Revolving<small>Pick member, clear Revolving only</small></button><button class="clear-opt" onclick="openClearTop('Loyalty')">🗑️ Clear Loyalty<small>Pick member, clear Loyalty only</small></button><button class="clear-opt danger" onclick="openClearTop('ALL')">🗑️ Clear ALL Loans<small>Pick member, clear all his loans</small></button></div></div></div></div>
+<div class="box" id="pendingLoanBox" style="display:none;background:#422006;border:1px solid #7c4d12">
+<h3 style="margin:0;color:#fbbf24">⏳ Pending Loans Waiting for Approval (<span id="pendingLoanCount">0</span>)</h3>
+<div id="pendingLoanList" style="margin-top:10px"></div>
+</div>
+<div class="cards"><div class="card"><small>Outstanding Balance</small><b id="cOutstanding">LSL 0.00</b><span id="cBreak" style="font-size:12px;color:#94a3b8"></span></div><div class="card"><small>Performing Loans</small><b id="cPerforming">0</b></div><div class="card"><small>Members with Loans</small><b id="cMembers">0</b></div></div>
+<div class="box"><h3 style="margin:0">Loan Portfolio</h3><div style="overflow:auto"><table><thead><tr><th>Member</th><th>Principal</th><th>Interest</th><th>Repaid</th><th>Outstanding</th><th>Active</th><th>Status</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+<div class="box"><h3>Repayment History</h3><div id="listRepay"></div></div></div>
+<div class="modal" id="repayModal"><div class="modal-box">
+<h3>💰 Record Repayment</h3><p id="repayMember" style="color:#94a3b8;font-size:13px"></p>
+<label>Outstanding Before</label><input id="repayBefore" disabled>
+<label>Amount (LSL)</label><input id="repayAmount" type="number" placeholder="e.g. 500">
+<label>Method</label><select id="repayMethod"><option>Cash</option><option>Bank Transfer</option><option>Mobile Money</option><option>Salary Deduction</option></select>
+<label>New Outstanding After</label><input id="repayAfter" disabled style="color:#22c55e;font-weight:bold">
+<div style="display:flex;gap:10px;margin-top:16px"><button class="btn" style="flex:1" onclick="closeRepay()">Cancel</button><button class="btn btn-green" style="flex:1" onclick="confirmRepay()">✅ Confirm</button></div></div></div>
+<div class="modal" id="clearModal"><div class="modal-box" style="width:480px"><h3 id="clearTitle">🗑️ Clear Loans</h3><label>Select Member</label><select id="clearMember" onchange="onClearMemberChange()"></select><div id="clearList" style="margin-top:12px"></div><div style="display:flex;gap:10px;margin-top:16px"><button class="btn" style="flex:1" onclick="closeClear()">Cancel</button><button class="btn" id="clearConfirmBtn" style="flex:1;background:#ef4444;border:none;font-weight:700" onclick="confirmClearTop()">Clear</button></div></div></div>
+<div id="printArea" style="display:none"></div>
+<style>@media print{ body *{visibility:hidden} #printArea, #printArea *{visibility:visible} #printArea{position:absolute;left:0;top:0;width:100%;display:block !important} }</style>
+<script>
+    if(localStorage.getItem('pe_role')!=='admin'){ location.href='/index.html'; }
+function rateFor(t){ t=(t||'').toLowerCase(); if(t.includes('emergency'))return 0.05; if(t.includes('long'))return 0.30; if(t.includes('revolving'))return 0.20; if(t.includes('loyalty'))return 0.0001; return 0.05; }
+function typeOf(t){ let s=((t.loanType||'')+' '+(t.desc||'')+' '+(t.type||'')).toLowerCase(); if(s.includes('emergency'))return 'emergency'; if(s.includes('long'))return 'long term'; if(s.includes('revolving'))return 'revolving'; if(s.includes('loyalty'))return 'loyalty'; return 'emergency'; }
+function labelOf(t){ let l=typeOf(t); return l==='long term'?'Long term':l.charAt(0).toUpperCase()+l.slice(1); }
+let members=[], allTxs={}, currentIdx=-1, currentData=null, clearMode='one', clearSelectedTid=null;
+function getPendingLoans(){ try{ return JSON.parse(localStorage.getItem('pendingLoans')||'[]'); }catch(e){ return []; } }
+function savePendingLoans(l){ localStorage.setItem('pendingLoans', JSON.stringify(l)); updateLoanBadge(); renderPendingLoans(); }
+function updateLoanBadge(){ let list=getPendingLoans().filter(p=>p.status==='pending'); let b=document.getElementById('loanBadge'); if(b){ b.style.display=list.length?'inline-flex':'none'; b.innerText=list.length; } }
+function renderPendingLoans(){
+  let list=getPendingLoans().filter(p=>p.status==='pending');
+  let box=document.getElementById('pendingLoanBox'); if(!box) return;
+  document.getElementById('pendingLoanCount').innerText=list.length;
+  if(!list.length){ box.style.display='none'; return; }
+  box.style.display='block';
+  document.getElementById('pendingLoanList').innerHTML=list.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:12px;border-radius:8px;margin-top:8px;flex-wrap:wrap;gap:10px"><div><b>${p.memberName||p.memberId}</b> (${p.memberId})<div style="color:#94a3b8;font-size:12px">${p.loanType} • ${p.months} months • ${Math.round((p.ratePct!=null?p.ratePct:(p.rate||0)*100))}% • Applied ${new Date(p.date).toLocaleDateString('en-GB')}<br>Principal LSL ${Number(p.amount||0).toLocaleString()} • Total to Repay LSL ${Number(p.totalToRepay||p.amount||0).toLocaleString()} • Monthly LSL ${Number(p.monthly||0).toLocaleString()}<br>Next of Kin: ${p.nextKinName||'-'} (${p.nextKinPhone||'-'})</div></div><div style="display:flex;gap:6px"><button class="btn-approve" onclick="approveLoan('${p.id}')">✅ Approve</button><button class="btn-reject" onclick="rejectLoan('${p.id}')">❌ Reject</button><button class="btn" onclick="downloadOneStatement('${p.id}')">📄 Statement</button></div></div>`).join('');
+}
+async function approveLoan(pid){
+  let list=getPendingLoans(); let p=list.find(x=>x.id===pid); if(!p) return;
+  if(!confirm('Approve '+p.loanType+' LSL '+p.amount+' for '+p.memberName+'?')) return;
+  let res=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:p.memberId,member_no:p.memberId,type:'loan',amount:p.amount,principal:p.amount,totalToRepay:p.totalToRepay,loanType:p.loanType,months:p.months,duration:p.months,rate:p.rate,nextKinName:p.nextKinName||'',nextKinPhone:p.nextKinPhone||'',desc:'Loan - '+p.loanType,date:new Date().toISOString()})});
+  if(!res.ok) return alert('Approve FAILED');
+  p.status='approved'; savePendingLoans(list); alert('✅ Approved! Loan is now active.'); await load();
+}
+function rejectLoan(pid){ let list=getPendingLoans(); let p=list.find(x=>x.id===pid); if(!p) return; if(!confirm('Reject loan for '+p.memberName+'?')) return; p.status='rejected'; savePendingLoans(list); alert('Loan rejected.'); }
+function downloadOneStatement(pid){
+  let p=getPendingLoans().find(x=>x.id===pid); if(!p) return;
+  let mem = members.find(x=>String(x.member_no||x.id)===String(p.memberId));
+  let name = p.memberName || (mem?mem.name:'Unknown');
+  let phone = mem?mem.phone||'':'';
+  let email = mem?mem.email||'':'';
+  let idNo = mem?mem.idNumber||mem.idNo||mem.nationalId||'':'';
+  let ratePct = p.ratePct!=null ? p.ratePct : (p.rate||0)*100;
+  if(p.rate>1 && !p.ratePct) ratePct = p.rate;
+  if(ratePct>100) ratePct = ratePct/100;
+  let principal = Number(p.amount||0);
+  let interest = principal * (ratePct/100);
+  let total = Number(p.totalToRepay|| (principal+interest));
+  let monthly = Number(p.monthly|| (total/(p.months||1)));
+  let d = new Date(p.date||Date.now());
+  let due = new Date(d); due.setMonth(due.getMonth() + Number(p.months||1));
+  let fmt = (x)=>x.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  let productLabel = p.loanType==='Emergency' ? 'Emergency loan Equal or Less than 2000.00'
+    : p.loanType==='Long term' ? 'Long term loan'
+    : p.loanType==='Revolving' ? 'Revolving loan'
+    : p.loanType==='Loyalty' ? 'Loyalty loan' : p.loanType+' loan';
+  let html = `
+  <div style="font-family:Arial;color:#000;background:#fff;padding:30px;max-width:800px;margin:auto">
+    <h1 style="margin:0;font-size:28px">P. E. SACCOS LTD</h1>
+    <h2 style="margin:8px 0 0;font-weight:600">Loan Application — ${name}</h2>
+    <p style="color:#555;margin:6px 0">Generated: ${fmt(new Date())}</p>
+    <table width="100%" cellpadding="10" style="border-collapse:collapse;margin:16px 0"><tr>
+      <td style="border:1px solid #ddd"><b>Member:</b><br>${name}</td>
+      <td style="border:1px solid #ddd"><b>Amount:</b><br>LSL ${principal.toLocaleString()}</td>
+      <td style="border:1px solid #ddd"><b>Status:</b><br>Pending</td>
+      <td style="border:1px solid #ddd"><b>Date:</b><br>${fmt(d)}</td>
+    </tr></table>
+    <h3>Applicant Details</h3>
+    <table width="100%" cellpadding="8" style="border-collapse:collapse"><tr><td><b>Full Name</b><br>${name}</td><td><b>Member Number</b><br>${p.memberId}</td></tr>
+    <tr><td><b>Phone</b><br>${phone}</td><td><b>Email</b><br>${email}</td></tr>
+    <tr><td colspan="2"><b>ID Number</b><br>${idNo}</td></tr></table>
+    <div style="page-break-before:always"></div>
+    <h3>Loan Details</h3>
+    <table width="100%" cellpadding="10" style="border-collapse:collapse;font-size:14px">
+      <tr><td style="border-bottom:1px solid #eee"><b>Loan Product</b></td><td style="border-bottom:1px solid #eee;text-align:right">${productLabel}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Principal Amount</b></td><td style="border-bottom:1px solid #eee;text-align:right">LSL ${principal.toLocaleString()}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Interest Rate</b></td><td style="border-bottom:1px solid #eee;text-align:right">${ratePct}%</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Interest (${ratePct}%)</b></td><td style="border-bottom:1px solid #eee;text-align:right">LSL ${interest.toFixed(2)}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Outstanding Balance</b></td><td style="border-bottom:1px solid #eee;text-align:right">LSL ${total.toFixed(2)}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Monthly Installment</b></td><td style="border-bottom:1px solid #eee;text-align:right">LSL ${monthly.toFixed(2)}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Disbursed At</b></td><td style="border-bottom:1px solid #eee;text-align:right">${fmt(d)}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Due Date</b></td><td style="border-bottom:1px solid #eee;text-align:right">${fmt(due)}</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Status</b></td><td style="border-bottom:1px solid #eee;text-align:right">Pending</td></tr>
+      <tr><td style="border-bottom:1px solid #eee"><b>Next of Kin Name</b></td><td style="border-bottom:1px solid #eee;text-align:right">${p.nextKinName||'-'}</td></tr>
+      <tr><td><b>Next of Kin Phone</b></td><td style="text-align:right">${p.nextKinPhone||'-'}</td></tr>
+    </table>
+    <div style="page-break-before:always"></div>
+    <h1 style="font-size:24px">P. E. SACCOS LTD</h1>
+    <h3>Terms & Conditions</h3>
+    <div style="font-size:13px;line-height:1.6">
+    <p>1. By accepting this loan, the borrower agrees to repay the principal amount plus interest at the agreed rate. Late payments will incur a penalty of 100% per month on the outstanding monthly interest. The SACCO reserves the right to recover the loan from the borrower's shares and savings in case of default.</p>
+    <p>2. The Borrower shall be entitled to pay larger instalments than prescribed or in full balance of capital and interest at anytime prior to the prescribed dates of payment. In such event, interest shall be calculated to the date of payment.</p>
+    <p>3. ACCELARATION CLAUSE<br>If the Borrower fails to pay any instalment on due date without prior explanation, the lender shall be entitled or obliged to claim the full balance of the loan</p>
+    <p>4. COLLECTION FEES<br>If this contract is placed with a legal representative for collection of unpaid balance, then borrower agrees to pay an attorney's fee. This fee will be added to the unpaid balance.</p>
+    <p>5. Next of kin or Spouse<br>Next of kin or Spouse shall be likewise accountable with the borrower for this loan.</p>
+    <p>6. Late Payment is NOT allowed in Emergency Loans.</p>
+    <p style="margin-top:20px">Acknowledged by ${name} (${p.memberId}) on ${fmt(new Date())}.</p>
+    <div style="margin-top:40px;border-top:1px solid #000;width:250px;padding-top:6px">Signature</div>
+    </div>
+  </div>`;
+  document.getElementById('printArea').innerHTML = html;
+  document.getElementById('printArea').style.display='block';
+  window.print();
+  document.getElementById('printArea').style.display='none';
+}
+function downloadLoanStatement(){
+  let rows=[['P.E. SACCOS LTD - LOAN STATEMENT - '+new Date().toLocaleDateString('en-GB')],['Member','Member ID','Loan Type','Principal','Interest','Repaid','Outstanding','Status']];
+  let list=members.map(calcFor).filter(x=>x.P>0);
+  list.forEach(x=>rows.push([x.name,x.id,x.lastType,x.P,x.I.toFixed(2),x.R,x.total.toFixed(2),x.total<=0?'Paid':'Active']));
+  rows.push([]); rows.push(['PENDING LOANS']);
+  getPendingLoans().filter(p=>p.status==='pending').forEach(p=>rows.push([p.memberName,p.memberId,p.loanType,p.amount,'', '',p.totalToRepay,'Pending']));
+  let csv=rows.map(r=>r.join(',')).join('\n'); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='loan-statement-all-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+}
+async function load(){ let r=await fetch('/api/members'); let d=await r.json(); members=d.members||d||[]; allTxs={}; for(let m of members){ let id=m.member_no||m.id; if(!id) continue; try{ let rr=await fetch('/api/transactions?memberId='+id); if(rr.ok){ let dd=await rr.json(); allTxs[String(id)]=Array.isArray(dd)?dd:(dd.transactions||[]); } }catch(e){} } render(); updateLoanBadge(); renderPendingLoans(); }
+function calcFor(m){ let id=m.member_no||m.id; let txs=allTxs[String(id)]||[]; let per={}; let P=0,I=0,R=0; txs.forEach(t=>{ let ty=((t.type||'')+' '+(t.desc||'')+' '+(t.loanType||'')).toLowerCase(); let amt=Number(t.amount||0); let lt=typeOf(t); if(!per[lt]) per[lt]={p:0,i:0,r:0}; if(ty.includes('repay')){ R+=amt; per[lt].r+=amt; } else if(ty.includes('loan')){ P+=amt; let intr=amt*rateFor(ty); I+=intr; per[lt].p+=amt; per[lt].i+=intr; } }); let active=0; Object.values(per).forEach(v=>{ if(v.p+v.i-v.r>0.01) active++; }); let total=Math.max(0,P+I-R); let lastType=txs.length?typeOf(txs[txs.length-1]):'emergency'; return {name:m.name||'Unknown',id,P,I,R,total,active,lastType,txs}; }
+function openRepay(idx){ let m=members[idx]; let n=calcFor(m); currentIdx=idx; currentData=n; document.getElementById('repayMember').innerText=n.name+' ('+n.id+') • '+n.lastType+' • Outstanding LSL '+n.total.toFixed(2); document.getElementById('repayBefore').value='LSL '+n.total.toFixed(2); document.getElementById('repayAmount').value=''; document.getElementById('repayAfter').value='LSL '+n.total.toFixed(2); document.getElementById('repayModal').style.display='flex'; document.getElementById('repayAmount').oninput=function(){ document.getElementById('repayAfter').value='LSL '+Math.max(0,n.total-Number(this.value||0)).toFixed(2); }; }
+function closeRepay(){ document.getElementById('repayModal').style.display='none'; }
+async function confirmRepay(){ let amt=Number(document.getElementById('repayAmount').value||0); if(!amt) return alert('Enter amount'); let m=members[currentIdx]; let id=m.member_no||m.id; let loanType=currentData.lastType; let res=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:id,member_no:id,type:'repayment',amount:amt,loanType:loanType,desc:'Repayment - '+loanType,date:new Date().toISOString()})}); if(!res.ok) return alert('Repayment FAILED'); closeRepay(); await load(); alert('✅ Paid LSL '+amt.toFixed(2)+' for '+m.name+'\nNew Outstanding: LSL '+Math.max(0,currentData.total-amt).toFixed(2)); }
+function render(){ let list=members.map(calcFor).filter(x=>x.P>0); let totP=list.reduce((s,x)=>s+x.P,0), totI=list.reduce((s,x)=>s+x.I,0), totR=list.reduce((s,x)=>s+x.R,0), totO=list.reduce((s,x)=>s+x.total,0), totA=list.reduce((s,x)=>s+x.active,0); document.getElementById('cOutstanding').innerText='LSL '+totO.toFixed(2); document.getElementById('cBreak').innerText='Principal '+totP.toLocaleString()+' + Interest '+totI.toFixed(2)+' - Repaid '+totR.toLocaleString(); document.getElementById('cPerforming').innerText=totA; document.getElementById('cMembers').innerText=list.length; document.getElementById('tbody').innerHTML=list.length?list.map(x=>{ let idx=members.findIndex(m=>String(m.member_no||m.id)===String(x.id)); let status=x.total<=0?'Paid':'Active'; return `<tr><td><b>${x.name}</b><br><span style="color:#94a3b8;font-size:12px">${x.id} • ${x.lastType}</span></td><td>LSL ${x.P.toLocaleString()}</td><td>LSL ${x.I.toFixed(2)}</td><td>LSL ${x.R.toLocaleString()}</td><td><b>LSL ${x.total.toFixed(2)}</b></td><td><b>${x.active} active</b></td><td><span class="st ${status}">${status}</span></td><td><button class="btn btn-green" onclick="openRepay(${idx})">💰 Repayment</button></td></tr>`; }).join(''):'<tr><td colspan="8">No loans yet. Go to Members → + New Loan</td></tr>'; let reps=[]; list.forEach(x=>x.txs.forEach(t=>{ if(((t.type||'')+' '+(t.desc||'')).toLowerCase().includes('repay')) reps.push({name:x.name,amount:t.amount,date:(t.date||'').slice(0,10),desc:t.desc||''}); })); document.getElementById('listRepay').innerHTML=reps.length?reps.slice().reverse().map(r=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #334155"><b>${r.name}</b><b style="color:#22c55e">LSL ${Number(r.amount).toLocaleString()}</b><span>${r.desc} • ${r.date}</span></div>`).join(''):'<p style="color:#94a3b8">No repayments yet.</p>'; }
+function toggleClearMenu(e){ e.stopPropagation(); let m=document.getElementById('clearMenu'); m.style.display=m.style.display==='block'?'none':'block'; }
+document.addEventListener('click',()=>{ let m=document.getElementById('clearMenu'); if(m) m.style.display='none'; });
+function openClearTop(mode){ document.getElementById('clearMenu').style.display='none'; clearMode=mode; clearSelectedTid=null; let sel=document.getElementById('clearMember'); let withLoans=members.filter(m=>{ let id=m.member_no||m.id; return (allTxs[String(id)]||[]).some(t=>(t.type||'').toLowerCase().includes('loan')); }); sel.innerHTML=withLoans.length?withLoans.map(m=>`<option value="${m.member_no||m.id}">${m.name} (${m.member_no||m.id})</option>`).join(''):'<option value="">No members with loans</option>'; document.getElementById('clearTitle').innerText= mode==='one'?'🗑️ Clear One Loan': mode==='ALL'?'🗑️ Clear ALL Loans':'🗑️ Clear '+mode+' Loans'; document.getElementById('clearConfirmBtn').innerText= mode==='one'?'Select a loan below':'Clear '+ (mode==='ALL'?'ALL':mode); document.getElementById('clearConfirmBtn').style.display= mode==='one'?'none':'block'; onClearMemberChange(); document.getElementById('clearModal').style.display='flex'; }
+function onClearMemberChange(){ let mid=document.getElementById('clearMember').value; let txs=allTxs[String(mid)]||[]; let m=members.find(x=>String(x.member_no||x.id)===String(mid)); let loans=txs.filter(t=>(t.type||'').toLowerCase().includes('loan') && !(t.type||'').toLowerCase().includes('repay')); if(clearMode==='one'){ document.getElementById('clearList').innerHTML=loans.length?loans.slice().reverse().map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #334155"><div><b>${labelOf(t)} - LSL ${Number(t.amount||0).toLocaleString()}</b><div style="color:#94a3b8;font-size:12px">${(t.date||'').slice(0,10)} • ${t.desc||''}</div></div><button class="btn" style="background:#ef4444;padding:6px 12px;font-size:12px" onclick="doClearOne('${t.id}','${mid}','${labelOf(t)}','${Number(t.amount||0)}')">Clear</button></div>`).join(''):'<p style="color:#94a3b8">No loans for this member.</p>'; } else if(clearMode==='ALL'){ let c=calcFor(m||{member_no:mid,id:mid}); document.getElementById('clearList').innerHTML=`<p>Member: <b>${m?m.name:mid}</b><br>Outstanding: <b>LSL ${c.total.toFixed(2)}</b><br><span style="color:#94a3b8">This will delete ALL loans + repayments for this member only. Savings stay.</span></p>`; } else { let filt=loans.filter(t=>labelOf(t)===clearMode); let sum=filt.reduce((s,t)=>s+Number(t.amount||0),0); document.getElementById('clearList').innerHTML=`<p>Member: <b>${m?m.name:mid}</b><br>${clearMode} loans: <b>${filt.length}</b> • Principal: <b>LSL ${sum.toLocaleString()}</b><br><span style="color:#94a3b8">Other types will stay.</span></p>`; } }
+async function doClearOne(tid,mid,loanType,amount){ let m=members.find(x=>String(x.member_no||x.id)===String(mid)); if(!confirm('Clear this ONE loan?\n\n'+loanType+' - LSL '+Number(amount).toFixed(2)+'\nMember: '+(m?m.name:mid)+'\n\nThis DELETES it. Are you sure?')) return; let res=await fetch('/api/transaction/'+tid+'?memberId='+mid,{method:'DELETE'}); if(!res.ok) return alert('Clear FAILED'); closeClear(); alert('✅ This ONE loan cleared!'); await load(); }
+async function confirmClearTop(){ let mid=document.getElementById('clearMember').value; if(!mid) return alert('Select member'); let m=members.find(x=>String(x.member_no||x.id)===String(mid)); let name=m?m.name:mid; if(clearMode==='ALL'){ if(!confirm('Clear ALL loans for '+name+'?\n\nThis deletes ALL loans + repayments for THIS member only. Are you sure?')) return; let res=await fetch('/api/clear-loans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:mid})}); if(!res.ok) return alert('Clear All FAILED'); closeClear(); alert('✅ All loans cleared for '+name); await load(); } else { if(!confirm('Clear ALL '+clearMode+' loans for '+name+'?\n\nOther types will stay. Are you sure?')) return; let res=await fetch('/api/clear-loans-type',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:mid,loanType:clearMode})}); if(!res.ok) return alert('Clear FAILED'); closeClear(); alert('✅ All '+clearMode+' cleared for '+name); await load(); } }
+function closeClear(){ document.getElementById('clearModal').style.display='none'; }
+load(); updateLoanBadge(); renderPendingLoans(); setInterval(updateLoanBadge,2000); setInterval(renderPendingLoans,2000);
+</script>
+</body></html>

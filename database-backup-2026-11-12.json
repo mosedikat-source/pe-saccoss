@@ -1,0 +1,450 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin",
+      "email": "mosedikat@gmail.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Staff",
+      "email": "staff",
+      "password": "staff123",
+      "role": "staff"
+    }
+  ],
+  "members": [
+    {
+      "id": "M201",
+      "name": "Poverty",
+      "email": "povertyeradication29@gmail.com",
+      "phone": "57327700",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Pesacoss",
+      "status": "approved",
+      "date": "2026-10-23T12:02:28.503Z",
+      "savings": 1250,
+      "balance": 1250,
+      "loan": 329600,
+      "loanBalance": 329600
+    },
+    {
+      "id": "M202",
+      "name": "Mosedi Katleho",
+      "email": "mosedikat@gmail.com",
+      "phone": "58835011",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Success@yahoo1",
+      "status": "approved",
+      "date": "2026-10-23T13:05:01.276Z",
+      "savings": 5455,
+      "balance": 5455,
+      "loan": 327000,
+      "loanBalance": 327000
+    },
+    {
+      "id": "M203",
+      "name": "moahloli motloang",
+      "email": "moahloli@gmail.com",
+      "phone": "58900078",
+      "idNumber": "987654321",
+      "gender": "Female",
+      "password": "Moahloli@1998",
+      "status": "approved",
+      "date": "2026-10-24T14:12:41.590Z",
+      "savings": 5000,
+      "balance": 5000,
+      "loan": 1040000,
+      "loanBalance": 1040000
+    },
+    {
+      "id": "M204",
+      "name": "bob Moseli",
+      "email": "bob@gmail.com",
+      "phone": "58521415",
+      "idNumber": "101010101010",
+      "gender": "Male",
+      "password": "bob@1988",
+      "status": "approved",
+      "date": "2026-10-27T12:45:28.986Z",
+      "savings": 100,
+      "balance": 100,
+      "loan": 1050000,
+      "loanBalance": 1050000
+    },
+    {
+      "id": "M205",
+      "name": "TT Foulo",
+      "email": "tlokotsi@gmail.com",
+      "phone": "52856554",
+      "idNumber": "0258896547",
+      "gender": "Male",
+      "password": "123456789",
+      "status": "approved",
+      "date": "2026-10-30T13:06:06.751Z",
+      "savings": 7000,
+      "balance": 7000,
+      "loan": 2000,
+      "loanBalance": 2000
+    }
+  ],
+  "pendingMembers": [],
+  "transactions": [
+    {
+      "id": 1793111615257,
+      "memberId": "M201",
+      "amount": 150,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:33:35.257Z"
+    },
+    {
+      "id": 1793111728774,
+      "memberId": "M201",
+      "amount": 200,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:35:28.774Z"
+    },
+    {
+      "id": 1793111990812,
+      "memberId": "M202",
+      "amount": 6000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-27T14:39:50.812Z"
+    },
+    {
+      "id": 1793112013685,
+      "memberId": "M202",
+      "amount": 455,
+      "type": "Deposit",
+      "desc": "Monthly Savings",
+      "date": "2026-10-27T14:40:13.685Z"
+    },
+    {
+      "id": 1793177128556,
+      "memberId": "M201",
+      "amount": 100,
+      "type": "Withdrawal",
+      "desc": "",
+      "date": "2026-10-28T08:45:28.556Z"
+    },
+    {
+      "id": 1793179514579,
+      "memberId": "M202",
+      "amount": 100,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-10-28T09:25:14.579Z"
+    },
+    {
+      "id": 1793190713091,
+      "memberId": "M201",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-28T12:31:53.091Z"
+    },
+    {
+      "id": 1793196500377,
+      "memberId": "M204",
+      "amount": 100,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-28T14:08:20.377Z"
+    },
+    {
+      "id": 1793365716717,
+      "memberId": "M205",
+      "amount": 7000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-10-30T13:08:36.717Z"
+    },
+    {
+      "id": 1793803534125,
+      "memberId": "[object HTMLParagraphElement]",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T14:45:34.125Z"
+    },
+    {
+      "id": 1793803554144,
+      "memberId": "[object HTMLParagraphElement]",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T14:45:54.144Z"
+    },
+    {
+      "id": 1793804756592,
+      "memberId": "M202",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T15:05:56.592Z"
+    },
+    {
+      "id": 1793804844124,
+      "memberId": "M202",
+      "amount": 3000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-04T15:07:24.124Z"
+    },
+    {
+      "id": 1793857267605,
+      "memberId": "M202",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Loyalty",
+      "date": "2026-11-05T05:41:07.605Z"
+    },
+    {
+      "id": 1794318738045,
+      "memberId": "M201",
+      "amount": 1000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-10T13:52:18.046Z"
+    },
+    {
+      "id": 1794318763244,
+      "memberId": "M201",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Loyalty",
+      "date": "2026-11-10T13:52:43.244Z"
+    },
+    {
+      "id": 1794318986694,
+      "memberId": "M201",
+      "amount": 100,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-10T13:56:26.694Z"
+    },
+    {
+      "id": 1794321053964,
+      "memberId": "M202",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "monthly savings",
+      "date": "2026-11-10T14:30:53.964Z"
+    },
+    {
+      "id": 1794322214257,
+      "memberId": "M205",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-10T14:50:14.257Z"
+    },
+    {
+      "id": 1794386569546,
+      "memberId": "M201",
+      "amount": 500,
+      "type": "Deposit",
+      "desc": "November monthly savings",
+      "date": "2026-11-11T08:42:49.546Z"
+    },
+    {
+      "id": 1794386788364,
+      "memberId": "M202",
+      "amount": 1000,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-11-11T08:46:28.364Z"
+    },
+    {
+      "id": 1794396467948,
+      "memberId": "M202",
+      "amount": 1000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T11:27:47.948Z"
+    },
+    {
+      "id": 1794397784704,
+      "memberId": "M202",
+      "amount": 500,
+      "type": "deposit",
+      "desc": "",
+      "date": "2026-11-11T11:49:44.704Z"
+    },
+    {
+      "id": 1794403532071,
+      "memberId": "M204",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:25:32.071Z"
+    },
+    {
+      "id": 1794403566023,
+      "memberId": "M204",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:26:06.023Z"
+    },
+    {
+      "id": 1794403584382,
+      "memberId": "M204",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:26:24.382Z"
+    },
+    {
+      "id": 1794403630047,
+      "memberId": "M204",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:27:10.047Z"
+    },
+    {
+      "id": 1794403712013,
+      "memberId": "M204",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:28:32.013Z"
+    },
+    {
+      "id": 1794403783485,
+      "memberId": "M201",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:29:43.485Z"
+    },
+    {
+      "id": 1794403975086,
+      "memberId": "M202",
+      "amount": 105000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:32:55.086Z"
+    },
+    {
+      "id": 1794404786659,
+      "memberId": "M202",
+      "amount": 210000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:46:26.659Z"
+    },
+    {
+      "id": 1794405096257,
+      "memberId": "M202",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:51:36.257Z"
+    },
+    {
+      "id": 1794405149056,
+      "memberId": "M201",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Long term",
+      "date": "2026-11-11T13:52:29.056Z"
+    },
+    {
+      "id": 1794405196573,
+      "memberId": "M201",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Revolving",
+      "date": "2026-11-11T13:53:16.573Z"
+    },
+    {
+      "id": 1794405222315,
+      "memberId": "M201",
+      "amount": 2000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T13:53:42.315Z"
+    },
+    {
+      "id": 1794405236600,
+      "memberId": "M201",
+      "amount": 200,
+      "type": "loan",
+      "desc": "Loan - Loyalty",
+      "date": "2026-11-11T13:53:56.600Z"
+    },
+    {
+      "id": 1794405258624,
+      "memberId": "M201",
+      "amount": 5000,
+      "type": "loan",
+      "desc": "Loan - Loyalty",
+      "date": "2026-11-11T13:54:18.624Z"
+    },
+    {
+      "id": 1794405271078,
+      "memberId": "M201",
+      "amount": 300,
+      "type": "loan",
+      "desc": "Loan - Long term",
+      "date": "2026-11-11T13:54:31.078Z"
+    },
+    {
+      "id": 1794405942211,
+      "memberId": "M202",
+      "amount": 1000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T14:05:42.211Z"
+    },
+    {
+      "id": 1794407130351,
+      "memberId": "M202",
+      "amount": 1000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T14:25:30.351Z"
+    },
+    {
+      "id": 1794407187621,
+      "memberId": "M202",
+      "amount": 5000,
+      "type": "loan",
+      "desc": "Loan - Long term",
+      "date": "2026-11-11T14:26:27.621Z"
+    },
+    {
+      "id": 1794407481436,
+      "memberId": "M201",
+      "amount": 105000,
+      "type": "loan",
+      "desc": "Loan - Emergency",
+      "date": "2026-11-11T14:31:21.436Z"
+    },
+    {
+      "id": 1794417246137,
+      "memberId": "M203",
+      "amount": 5000,
+      "type": "Deposit",
+      "desc": "",
+      "date": "2026-11-11T17:14:06.137Z"
+    },
+    {
+      "id": 1794417283516,
+      "memberId": "M203",
+      "amount": 1040000,
+      "type": "loan",
+      "desc": "Loan - Long term",
+      "date": "2026-11-11T17:14:43.516Z"
+    }
+  ]
+}

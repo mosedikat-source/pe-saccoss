@@ -1,0 +1,43 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin",
+      "email": "mosedikat@gmail.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Staff",
+      "email": "staff",
+      "password": "staff123",
+      "role": "staff"
+    }
+  ],
+  "members": [],
+  "pendingMembers": [
+    {
+      "id": "M201",
+      "name": "Poverty",
+      "email": "povertyeradication29@gmail.com",
+      "phone": "57327700",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Pesacoss",
+      "status": "pending",
+      "date": "2026-10-23T12:02:28.503Z"
+    },
+    {
+      "id": "M202",
+      "name": "Mosedi Katleho",
+      "email": "mosedikat@gmail.com",
+      "phone": "58835011",
+      "idNumber": "123456789",
+      "gender": "Male",
+      "password": "Success@yahoo1",
+      "status": "pending",
+      "date": "2026-10-23T13:05:01.276Z"
+    }
+  ]
+}
