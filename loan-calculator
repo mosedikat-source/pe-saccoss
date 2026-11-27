@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loan Calculator - P.E. SACCOS LTD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{background:#0f172a;color:#fff;min-height:100vh;display:flex}
+.sidebar{width:250px;background:#020617;padding:18px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.brand-logo{width:42px;height:42px;flex-shrink:0}
+.brand-name{font-weight:800;font-size:15px}.brand-email{color:#64748b;font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge-admin{background:#14532d;border:1px solid #22c55e;color:#22c55e;font-size:11px;padding:2px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.menu-title{color:#475569;font-size:12px;margin:18px 0 8px;letter-spacing:.5px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#94a3b8;text-decoration:none;font-size:14px;cursor:pointer;position:relative}
+.menu-item.active{background:#1e293b;color:#fff}
+.menu-item:hover{background:#1a2332;color:#fff}
+.menu-item .count{position:absolute;right:12px;background:#f59e0b;color:#000;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+.main{flex:1;padding:20px;overflow:auto;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.topbar .icons{display:flex;gap:16px;align-items:center;font-size:20px;cursor:pointer}
+.box{background:#1e293b;border:1px solid #2d3a52;border-radius:14px;padding:22px;margin-bottom:16px}
+.grid5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:12px;margin-top:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+label{font-size:13px;color:#fff;font-weight:600}
+input,select{width:100%;padding:12px;border-radius:10px;background:#0f172a;color:#fff;border:1px solid #334155;margin-top:6px;font-size:16px}
+.btn{padding:10px 16px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;cursor:pointer;font-weight:600;font-size:13px}
+.btn-green{background:#22c55e;color:#fff;border:none}
+.btn-gold{background:#f59e0b;color:#000;border:none}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:#94a3b8;text-align:left;padding:12px 8px;border-bottom:1px solid #334155;font-weight:500}
+td{padding:12px 8px;border-bottom:1px solid #1e293b}
+.hamburger{display:none;background:#1e293b;border:1px solid #334155;color:#fff;font-size:22px;padding:6px 12px;border-radius:10px;cursor:pointer}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+.overlay.show{display:block}
+.calc-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media(max-width:900px){
+  body{flex-direction:column}
+  .hamburger{display:block}
+  .sidebar{position:fixed;left:-280px;top:0;bottom:0;z-index:99;transition:left .3s;box-shadow:20px 0 40px rgba(0,0,0,.5);height:100dvh}
+  .sidebar.open{left:0}
+  .main{padding:14px;width:100%}
+  .grid5{grid-template-columns:1fr 1fr}
+  .grid3{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .grid5{grid-template-columns:1fr}
+  .box{padding:14px}
+  .calc-actions{flex-direction:column}
+  .calc-actions .btn{width:100%}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+}
+@media print{ .sidebar,.no-print,.hamburger,.overlay{display:none!important} body{background:#fff;color:#000} .main{padding:0} .box{background:#fff;color:#000;border:1px solid #ccc} }
+</style></head><body>
+<div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+<div id="sidebar" class="sidebar">
+<div class="brand"><svg class="brand-logo" viewBox="0 0 100 100"><circle cx="50" cy="50" r="12" fill="#0f172a"/><g><circle cx="50" cy="12" r="8" fill="#f97316"/><path d="M35 35 Q50 28 65 35 L60 55 Q50 48 40 55 Z" fill="#f97316"/></g><g><circle cx="85" cy="32" r="8" fill="#3b82f6"/><path d="M70 45 Q80 30 88 35 L78 58 Q70 52 62 48 Z" fill="#3b82f6"/></g><g><circle cx="78" cy="72" r="8" fill="#a21caf"/><path d="M60 62 Q78 62 82 72 L60 82 Q58 72 52 66 Z" fill="#a21caf"/></g><g><circle cx="35" cy="82" r="8" fill="#22c55e"/><path d="M48 66 Q42 78 28 78 L35 58 Q45 60 52 62 Z" fill="#22c55e"/></g><g><circle cx="12" cy="38" r="8" fill="#f59e0b"/><path d="M28 42 Q18 35 15 28 L38 28 Q38 40 35 48 Z" fill="#f59e0b"/></g></svg><div><div class="brand-name">P. E. SACCOS LTD</div><div style="display:flex;gap:6px;align-items:center"><span class="brand-email">mosedikat@gm...</span><span class="badge-admin">🛡️ admin</span></div></div></div>
+<div class="menu-title">Menu</div>
+<a href="dashboard.html" class="menu-item">⊞ Dashboard</a>
+<a href="staff-dashboard.html" class="menu-item">▦ Staff Dashboard</a>
+<a href="members.html" class="menu-item">👥 Members</a>
+<a href="savings.html" class="menu-item">🐷 Savings <span class="count" id="menuSavingsBadge" style="display:none">0</span></a>
+<a href="loans.html" class="menu-item">🏦 Loans <span class="count" id="menuLoansBadge" style="display:none">0</span></a>
+<a href="loan-products.html" class="menu-item">📦 Loan Products</a>
+<a href="loan-calculator.html" class="menu-item active">🧮 Loan Calculator</a>
+<a href="dividends.html" class="menu-item">💰 Dividends</a>
+<a href="reports.html" class="menu-item">📄 Reports</a>
+<div class="menu-title">System</div>
+<a href="repayment-audit.html" class="menu-item">📋 Repayment Audit</a>
+<a href="settings.html" class="menu-item">⚙️ Settings</a>
+<div style="margin-top:40px"><a href="/" onclick="localStorage.clear()" class="menu-item">↩ Logout</a></div>
+</div>
+
+<div class="main">
+<div class="topbar"><div><button class="hamburger" onclick="toggleMenu()">☰</button></div><div class="icons"><span onclick="location.href='settings.html'">🔧</span><span style="position:relative" onclick="location.href='loans.html'">🔔<span id="topBellCount" style="position:absolute;top:-8px;right:-8px;background:#7f1d1d;font-size:10px;padding:2px 5px;border-radius:10px;display:none">0</span></span></div></div>
+
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:18px"><span style="font-size:28px">🧮</span><div><h1 style="font-size:28px;font-weight:800">Loan Calculator</h1><p style="color:#94a3b8;font-size:13px;margin-top:2px">Estimate your installments, interest and balance over time.</p></div></div>
+
+<div class="box"><h3>Loan details</h3><p style="color:#94a3b8;font-size:13px;margin-top:4px">These figures are an estimate only.</p>
+<div style="margin-top:14px"><label>Loan Product — select to auto-fill rate & term</label><select id="productSelect" onchange="applyProduct()"><option value="">Custom — type manually</option></select><div id="productHint" style="color:#64748b;font-size:12px;margin-top:4px"></div></div>
+<div class="grid5">
+<div><label>Principal (LSL)</label><input id="principal" type="number" value="5000" oninput="calc()"></div>
+<div><label>Interest rate (% )</label><input id="rate" type="number" step="0.01" value="5" oninput="calc()"></div>
+<div><label>Term (months)</label><input id="term" type="number" value="12" oninput="calc()"></div>
+<div><label>First payment date</label><input id="firstDate" type="date" value="2026-11-20" onchange="calc()"></div>
+<div><label>Interest method</label><select id="method" onchange="calc()"><option value="flat-once">Flat rate (once off)</option><option value="flat-month">Flat rate (per month)</option><option value="reducing">Reducing Balance</option></select></div>
+</div>
+<div class="calc-actions no-print"><button class="btn" onclick="clearAll()">↺ Clear</button><button class="btn btn-green" onclick="calc()">Calculate</button><button class="btn" onclick="window.print()">🖨️ Print Schedule</button><button class="btn btn-gold" onclick="applyToLoan()">🏦 Apply to Loan →</button></div>
+<div id="methodHint" style="color:#64748b;font-size:12px;margin-top:10px"></div>
+</div>
+
+<div class="grid3">
+<div class="box" style="margin:0"><div style="color:#94a3b8;font-size:13px">Monthly installment</div><div id="monthlyOut" style="font-size:22px;font-weight:800;margin-top:6px">LSL 437.50</div><div id="monthlyNote" style="color:#64748b;font-size:11px;margin-top:4px">Same every month (Flat)</div></div>
+<div class="box" style="margin:0"><div style="color:#94a3b8;font-size:13px">Total interest</div><div id="interestOut" style="font-size:22px;font-weight:800;margin-top:6px">LSL 250.00</div><div id="interestNote" style="color:#64748b;font-size:11px;margin-top:4px">5,000 × 5% = 250</div></div>
+<div class="box" style="margin:0"><div style="color:#94a3b8;font-size:13px">Total repayable</div><div id="totalOut" style="font-size:22px;font-weight:800;margin-top:6px">LSL 5,250.00</div><div id="totalNote" style="color:#64748b;font-size:11px;margin-top:4px">Principal + Interest</div></div>
+</div>
+
+<div class="box"><h3>Repayment schedule</h3><p id="scheduleTitle" style="color:#94a3b8;font-size:13px;margin-top:4px">12 payments, final payment on 10/20/2027</p>
+<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>#</th><th>Payment date</th><th style="text-align:right">Opening balance</th><th style="text-align:right">Interest</th><th style="text-align:right">Principal</th><th style="text-align:right">Installment</th><th style="text-align:right">Closing balance</th></tr></thead><tbody id="scheduleBody"></tbody></table></div>
+<div style="display:flex;justify-content:space-between;margin-top:12px;font-size:13px;flex-wrap:wrap;gap:8px"><span style="color:#94a3b8">Total Principal: <b id="sumPrincipal" style="color:#fff">LSL 5,000.00</b></span><span style="color:#94a3b8">Total Interest: <b id="sumInterest" style="color:#fff">LSL 250.00</b></span><span style="color:#94a3b8">Total Paid: <b id="sumTotal" style="color:#fff">LSL 5,250.00</b></span></div>
+</div>
+
+<div class="box"><h3>How to use</h3><div style="color:#94a3b8;font-size:13px;line-height:1.8;margin-top:6px">
+- <b style="color:#fff">Flat (once off):</b> Interest = Principal × Rate% once — e.g. Normal loan? No, Emergency ≤2000 uses this. Example in screenshot: 5,000 × 5% = 250<br>
+- <b style="color:#fff">Flat (per month):</b> Interest = Principal × Rate% × Months — e.g. Emergency >2000 at 5%/mo for 3 months: 5,000 × 5% × 3 = 750<br>
+- <b style="color:#fff">Reducing Balance:</b> Interest charged only on remaining balance — cheaper for member, interest drops each month<br>
+- <b style="color:#fff">Your Products:</b> Normal 30% Flat / Emergency >2000 5%/mo Reducing / Loyalty 0.01% Flat / Revolving 20% Flat / Emergency ≤2000 5% Flat
+</div></div>
+</div>
+
+<script>
+function toggleMenu(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); }
+if(localStorage.getItem('pe_role')!=='admin'){ location.href='/index.html'; }
+const DEFAULT_PRODUCTS=[
+  {id:'normal', name:'Normal loan', rate:30, rateType:'%', method:'Flat', maxTerm:60},
+  {id:'emerg-above', name:'Emergency Loan above 2000.00', rate:5, rateType:'%/mo', method:'Reducing Balance', maxTerm:3},
+  {id:'loyalty', name:'Loyalty benefits loan', rate:0.01, rateType:'%', method:'Flat', maxTerm:24},
+  {id:'revolving', name:'Loan revolving', rate:20, rateType:'%', method:'Flat', maxTerm:60},
+  {id:'emerg-below', name:'Emergency loan Equal or Less than 2000.00', rate:5, rateType:'%', method:'Flat', maxTerm:1},
+];
+function getProducts(){ try{ let p=JSON.parse(localStorage.getItem('loanProducts')||'null'); if(!p||!p.length) return DEFAULT_PRODUCTS; return p; }catch(e){ return DEFAULT_PRODUCTS; } }
+function fmt(n){ return 'LSL '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtShort(n){ return 'LSL '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function loadProducts(){
+  let sel=document.getElementById('productSelect');
+  getProducts().forEach(p=>{
+    let o=document.createElement('option'); o.value=p.id; o.textContent=p.name+' — '+p.rate+(p.rateType||'%')+' — '+p.method+' — '+p.maxTerm+' months'; sel.appendChild(o);
+  });
+  updateBadges();
+}
+function applyProduct(){
+  let id=document.getElementById('productSelect').value;
+  if(!id){ document.getElementById('productHint').innerText=''; return; }
+  let p=getProducts().find(x=>String(x.id)===String(id)); if(!p) return;
+  document.getElementById('rate').value=p.rate;
+  document.getElementById('term').value=p.maxTerm;
+  if(p.method==='Reducing Balance') document.getElementById('method').value='reducing';
+  else if(p.rateType==='%/mo') document.getElementById('method').value='flat-month';
+  else document.getElementById('method').value='flat-once';
+  document.getElementById('productHint').innerText='✔ '+p.name+' — '+p.rate+(p.rateType||'%')+' — '+p.method+' — Max '+p.maxTerm+' months — auto-filled. Change Principal to test.';
+  calc();
+}
+function addMonths(date, n){
+  let d=new Date(date); d.setMonth(d.getMonth()+n); return d;
+}
+function fmtDateUS(d){ return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear(); }
+function calc(){
+  let P=Number(document.getElementById('principal').value||0);
+  let rate=Number(document.getElementById('rate').value||0);
+  let term=Number(document.getElementById('term').value||0);
+  let method=document.getElementById('method').value;
+  let first=document.getElementById('firstDate').value || '2026-11-20';
+  if(!P || !term){ return; }
+  let schedule=[]; let totalInterest=0; let monthly=0;
+  if(method==='flat-once'){
+    totalInterest = P * rate/100;
+    let monthlyInterest = totalInterest/term;
+    let monthlyPrincipal = P/term;
+    monthly = monthlyPrincipal + monthlyInterest;
+    document.getElementById('methodHint').innerText='Flat (once off): Interest = '+P.toLocaleString()+' × '+rate+'% = '+fmt(totalInterest)+' once. Split equally over '+term+' months.';
+    document.getElementById('monthlyNote').innerText='Same every month (Flat)';
+    document.getElementById('interestNote').innerText=P.toLocaleString()+' × '+rate+'% = '+totalInterest.toFixed(2);
+    let bal=P;
+    for(let i=1;i<=term;i++){
+      let open=bal; let interest=monthlyInterest; let prin=monthlyPrincipal; let inst=monthly; bal=Math.max(0, bal-prin);
+      if(i===term){ prin=open; inst=prin+interest; bal=0; }
+      schedule.push({i, date:addMonths(first,i), open, interest, prin, inst, close:bal});
+    }
+  } else if(method==='flat-month'){
+    totalInterest = P * rate/100 * term;
+    let monthlyInterest = P * rate/100;
+    let monthlyPrincipal = P/term;
+    monthly = monthlyPrincipal + monthlyInterest;
+    document.getElementById('methodHint').innerText='Flat (per month): Interest per month = '+P.toLocaleString()+' × '+rate+'% = '+fmt(monthlyInterest)+' × '+term+' months = '+fmt(totalInterest);
+    document.getElementById('monthlyNote').innerText='Same every month (Flat per month)';
+    document.getElementById('interestNote').innerText=P.toLocaleString()+' × '+rate+'% × '+term+' = '+totalInterest.toFixed(2);
+    let bal=P;
+    for(let i=1;i<=term;i++){
+      let open=bal; let interest=monthlyInterest; let prin=monthlyPrincipal; let inst=monthly; bal=Math.max(0, bal-prin);
+      if(i===term){ prin=open; inst=prin+interest; bal=0; }
+      schedule.push({i, date:addMonths(first,i), open, interest, prin, inst, close:bal});
+    }
+  } else {
+    let r=rate/100;
+    if(r===0){ monthly=P/term; } else { monthly = P * r * Math.pow(1+r,term) / (Math.pow(1+r,term)-1); }
+    document.getElementById('methodHint').innerText='Reducing Balance: Interest charged only on remaining balance — interest drops each month. Monthly rate = '+rate+'%';
+    document.getElementById('monthlyNote').innerText='Reducing Balance — interest drops each month';
+    let bal=P;
+    for(let i=1;i<=term;i++){
+      let open=bal; let interest=open*r; let prin=monthly-interest; let inst=monthly;
+      if(i===term){ prin=open; inst=prin+interest; bal=0; } else { bal=open-prin; }
+      schedule.push({i, date:addMonths(first,i), open, interest, prin, inst, close:bal});
+      totalInterest+=interest;
+    }
+    document.getElementById('interestNote').innerText='Sum of monthly interest on reducing balance';
+  }
+  let total = P + totalInterest;
+  document.getElementById('monthlyOut').innerText=fmtShort(monthly);
+  document.getElementById('interestOut').innerText=fmtShort(totalInterest);
+  document.getElementById('totalOut').innerText=fmtShort(total);
+  document.getElementById('totalNote').innerText='Principal + Interest';
+  let last=schedule[schedule.length-1];
+  document.getElementById('scheduleTitle').innerText=term+' payments, final payment on '+fmtDateUS(last.date);
+  document.getElementById('scheduleBody').innerHTML=schedule.map(s=>`<tr><td>${s.i}</td><td>${fmtDateUS(s.date)}</td><td style="text-align:right">${fmt(s.open)}</td><td style="text-align:right">${fmt(s.interest)}</td><td style="text-align:right">${fmt(s.prin)}</td><td style="text-align:right">${fmt(s.inst)}</td><td style="text-align:right">${fmt(s.close)}</td></tr>`).join('');
+  let sumP=schedule.reduce((a,s)=>a+s.prin,0); let sumI=schedule.reduce((a,s)=>a+s.interest,0);
+  document.getElementById('sumPrincipal').innerText=fmt(sumP);
+  document.getElementById('sumInterest').innerText=fmt(sumI);
+  document.getElementById('sumTotal').innerText=fmt(sumP+sumI);
+  localStorage.setItem('calc_last', JSON.stringify({principal:P, rate, term, method, monthly, totalInterest, total, product:document.getElementById('productSelect').value}));
+}
+function clearAll(){
+  document.getElementById('principal').value=''; document.getElementById('rate').value=''; document.getElementById('term').value='';
+  document.getElementById('productSelect').value=''; document.getElementById('productHint').innerText='';
+  document.getElementById('monthlyOut').innerText='LSL 0.00'; document.getElementById('interestOut').innerText='LSL 0.00'; document.getElementById('totalOut').innerText='LSL 0.00';
+  document.getElementById('scheduleBody').innerHTML=''; document.getElementById('scheduleTitle').innerText='Enter loan details to see schedule';
+}
+function applyToLoan(){
+  let c=JSON.parse(localStorage.getItem('calc_last')||'{}');
+  if(!c.principal) return alert('Calculate first');
+  localStorage.setItem('apply_loan_amount', String(c.principal));
+  localStorage.setItem('apply_loan_product', c.product||'');
+  localStorage.setItem('apply_loan_term', String(c.term||''));
+  location.href='loans.html';
+}
+function updateBadges(){
+  try{
+    let loans=JSON.parse(localStorage.getItem('pendingLoans')||'[]').filter(x=>x.status==='pending').length;
+    let late=JSON.parse(localStorage.getItem('latePayments')||'[]').filter(x=>x.status==='pending').length;
+    let total=loans+late;
+    let ml=document.getElementById('menuLoansBadge'); if(ml){ ml.style.display=total?'inline-block':'none'; ml.innerText=total; }
+    let bell=document.getElementById('topBellCount'); if(bell){ bell.style.display=total?'block':'none'; bell.innerText=total; }
+    let sav=JSON.parse(localStorage.getItem('pendingSavings')||'[]').filter(x=>x.status==='pending').length;
+    let ms=document.getElementById('menuSavingsBadge'); if(ms){ ms.style.display=sav?'inline-block':'none'; ms.innerText=sav; }
+  }catch(e){}
+}
+loadProducts(); calc();
+</script>
+</body></html>
