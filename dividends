@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dividends - P.E. SACCOS LTD</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+body{background:#0f172a;color:#fff;min-height:100vh;display:flex}
+.sidebar{width:250px;background:#020617;padding:18px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.brand-logo{width:42px;height:42px;flex-shrink:0}
+.brand-name{font-weight:800;font-size:15px}.brand-email{color:#64748b;font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge-admin{background:#14532d;border:1px solid #22c55e;color:#22c55e;font-size:11px;padding:2px 8px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.menu-title{color:#475569;font-size:12px;margin:18px 0 8px;letter-spacing:.5px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#94a3b8;text-decoration:none;font-size:14px;cursor:pointer;position:relative}
+.menu-item.active{background:#1e293b;color:#fff}
+.menu-item:hover{background:#1a2332;color:#fff}
+.menu-item .count{position:absolute;right:12px;background:#f59e0b;color:#000;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+.main{flex:1;padding:20px;overflow:auto;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.topbar .icons{display:flex;gap:16px;align-items:center;font-size:20px;cursor:pointer}
+.header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.btn{padding:10px 16px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer;font-weight:600;font-size:13px}
+.btn-green{background:#22c55e;color:#fff;border:none}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.card{background:#1e293b;border:1px solid #2d3a52;border-radius:14px;padding:22px}
+.card-label{color:#94a3b8;font-size:13px}.card-num{font-size:28px;font-weight:800;margin-top:10px;word-break:break-word}.card-sub{color:#64748b;font-size:12px;margin-top:4px}
+.box{background:#1e293b;border:1px solid #2d3a52;border-radius:14px;padding:22px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:#94a3b8;text-align:left;padding:12px 8px;border-bottom:1px solid #334155;font-weight:500}
+td{padding:12px 8px;border-bottom:1px solid #1e293b}
+input,select,textarea{width:100%;padding:11px;border-radius:10px;background:#0f172a;color:#fff;border:1px solid #334155;margin-top:6px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:1000;padding:12px}
+.modal-box{background:#1e293b;border-radius:16px;padding:22px;width:92%;max-width:520px;max-height:92vh;overflow-y:auto}
+.icon-box{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.hamburger{display:none;background:#1e293b;border:1px solid #334155;color:#fff;font-size:22px;padding:6px 12px;border-radius:10px;cursor:pointer}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+.overlay.show{display:block}
+.history-row{display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:14px;border-radius:10px;margin-top:8px;flex-wrap:wrap;gap:10px}
+@media(max-width:900px){
+  body{flex-direction:column}
+  .hamburger{display:block}
+  .sidebar{position:fixed;left:-280px;top:0;bottom:0;z-index:99;transition:left .3s;box-shadow:20px 0 40px rgba(0,0,0,.5);height:100dvh}
+  .sidebar.open{left:0}
+  .main{padding:14px;width:100%}
+  .cards{grid-template-columns:1fr 1fr}
+  .header{flex-direction:column}
+  .header .no-print{display:flex;width:100%}
+  .header .no-print .btn{flex:1}
+}
+@media(max-width:520px){
+  .cards{grid-template-columns:1fr}
+  .card,.box{padding:14px}
+  .card-num{font-size:24px}
+  .header h1{font-size:22px !important}
+  .header .no-print{flex-direction:column}
+  .history-row{flex-direction:column;align-items:flex-start}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+}
+@media print{ .sidebar,.no-print,.hamburger,.overlay{display:none!important} body{background:#fff;color:#000} .main{padding:0} .box,.card{background:#fff;color:#000;border:1px solid #ccc} }
+</style>
+</head><body>
+<div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+<div id="sidebar" class="sidebar">
+<div class="brand"><svg class="brand-logo" viewBox="0 0 100 100"><circle cx="50" cy="50" r="12" fill="#0f172a"/><g><circle cx="50" cy="12" r="8" fill="#f97316"/><path d="M35 35 Q50 28 65 35 L60 55 Q50 48 40 55 Z" fill="#f97316"/></g><g><circle cx="85" cy="32" r="8" fill="#3b82f6"/><path d="M70 45 Q80 30 88 35 L78 58 Q70 52 62 48 Z" fill="#3b82f6"/></g><g><circle cx="78" cy="72" r="8" fill="#a21caf"/><path d="M60 62 Q78 62 82 72 L60 82 Q58 72 52 66 Z" fill="#a21caf"/></g><g><circle cx="35" cy="82" r="8" fill="#22c55e"/><path d="M48 66 Q42 78 28 78 L35 58 Q45 60 52 62 Z" fill="#22c55e"/></g><g><circle cx="12" cy="38" r="8" fill="#f59e0b"/><path d="M28 42 Q18 35 15 28 L38 28 Q38 40 35 48 Z" fill="#f59e0b"/></g></svg><div><div class="brand-name">P. E. SACCOS LTD</div><div style="display:flex;gap:6px;align-items:center"><span class="brand-email">mosedikat@gm...</span><span class="badge-admin">🛡️ admin</span></div></div></div>
+<div class="menu-title">Menu</div>
+<a href="dashboard.html" class="menu-item">⊞ Dashboard</a>
+<a href="staff-dashboard.html" class="menu-item">▦ Staff Dashboard</a>
+<a href="members.html" class="menu-item">👥 Members</a>
+<a href="savings.html" class="menu-item">🐷 Savings <span class="count" id="menuSavingsBadge" style="display:none">0</span></a>
+<a href="loans.html" class="menu-item">🏦 Loans <span class="count" id="menuLoansBadge" style="display:none">0</span></a>
+<a href="loan-products.html" class="menu-item">📦 Loan Products</a>
+<a href="loan-calculator.html" class="menu-item">🧮 Loan Calculator</a>
+<a href="dividends.html" class="menu-item active">💰 Dividends</a>
+<a href="reports.html" class="menu-item">📄 Reports</a>
+<div class="menu-title">System</div>
+<a href="repayment-audit.html" class="menu-item">📋 Repayment Audit</a>
+<a href="settings.html" class="menu-item">⚙️ Settings</a>
+<div style="margin-top:40px"><a href="/" onclick="localStorage.clear()" class="menu-item">↩ Logout</a></div>
+</div>
+
+<div class="main">
+<div class="topbar"><div><button class="hamburger" onclick="toggleMenu()">☰</button></div><div class="icons"><span onclick="location.href='settings.html'">🔧</span><span style="position:relative" onclick="location.href='loans.html'">🔔<span id="topBellCount" style="position:absolute;top:-8px;right:-8px;background:#7f1d1d;font-size:10px;padding:2px 5px;border-radius:10px;display:none">0</span></span></div></div>
+
+<div class="header"><div><h1 style="font-size:28px;font-weight:800">Dividends</h1><p style="color:#94a3b8;font-size:13px;margin-top:4px">Distribute profits to shareholders</p></div><div style="display:flex;gap:8px;flex-wrap:wrap" class="no-print"><button class="btn" onclick="window.print()">📄 Export PDF</button><button class="btn" onclick="showEconomic()">👥 Economic Participation</button><button class="btn btn-green" onclick="openDistribute()">💰 Distribute Dividends</button></div></div>
+
+<div class="cards">
+<div class="card"><div style="display:flex;gap:10px;align-items:center"><span class="icon-box" style="background:rgba(34,197,94,.15)">📊</span><span class="card-label">Total Shares Outstanding</span></div><div class="card-num" id="totalSharesOut">204</div><div class="card-sub" id="totalSharesValue">Value: LSL 408,000 • 1 Share = LSL 2,000</div></div>
+<div class="card"><div style="display:flex;gap:10px;align-items:center"><span class="icon-box" style="background:rgba(59,130,246,.15)">👥</span><span class="card-label">Shareholders</span></div><div class="card-num" id="shareholdersOut">204</div><div class="card-sub" id="shareholdersSub">Members with at least 1 share</div></div>
+<div class="card"><div style="display:flex;gap:10px;align-items:center"><span class="icon-box" style="background:rgba(234,179,8,.15)">💰</span><span class="card-label">Distributions Made</span></div><div class="card-num" id="distCountOut">0</div><div class="card-sub" id="distTotalOut">Total Paid: LSL 0.00</div></div>
+</div>
+
+<div id="economicBox" class="box" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><div><h3>👥 Economic Participation</h3><p style="color:#94a3b8;font-size:13px;margin-top:4px">Who owns what % of P.E. SACCOS LTD — based on shares</p></div><button class="btn no-print" onclick="document.getElementById('economicBox').style.display='none'">Hide</button></div>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap" class="no-print"><input id="econSearch" placeholder="🔍 Search member..." oninput="renderEconomic()" style="flex:1;min-width:180px"><select id="econSort" onchange="renderEconomic()" style="max-width:200px"><option value="shares-desc">Most shares first</option><option value="shares-asc">Fewest shares first</option><option value="name">Name A-Z</option></select></div>
+<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>#</th><th>Member</th><th>Shares</th><th>Share Value</th><th>% of SACCO</th><th>Dividend if LSL <span id="econProfitLabel">10,000</span> distributed</th></tr></thead><tbody id="economicBody"></tbody></table></div></div>
+
+<div class="box"><h3>Distribution History</h3><p style="color:#94a3b8;font-size:13px;margin-top:4px">Past dividend distributions</p>
+<div id="historyList" style="margin-top:14px"></div>
+<div id="emptyHistory" style="color:#94a3b8;text-align:center;padding:30px 0">No distributions yet.</div>
+</div>
+
+<div class="box"><h3>How Dividends work</h3><div style="color:#94a3b8;font-size:13px;line-height:1.8;margin-top:6px">
+- <b style="color:#fff">1 Share = LSL 2,000</b> — Member with 2 shares owns LSL 4,000 of SACCO<br>
+- <b style="color:#fff">Per Share Dividend = Total Profit ÷ Total Shares</b> — e.g. Profit LSL 20,400 ÷ 204 Shares = <b style="color:#fff">LSL 100 per share</b><br>
+- <b style="color:#fff">Member Dividend = Shares × Per Share</b> — e.g. 2 shares × 100 = <b style="color:#fff">LSL 200</b><br>
+- Dividend is added to member's Savings as <i>Dividend</i> transaction, so Savings total increases.<br>
+- <b style="color:#fff">Example:</b> If you distribute <b style="color:#fff">LSL 10,000</b> today, each share gets <b style="color:#fff" id="examplePerShare">LSL 49.02</b>
+</div></div>
+</div>
+
+<div id="distModal" class="modal"><div class="modal-box">
+<div style="display:flex;justify-content:space-between;align-items:center"><h3>💰 Distribute Dividends</h3><span style="cursor:pointer;font-size:20px" onclick="closeDist()">×</span></div>
+<p style="color:#94a3b8;font-size:13px;margin-top:6px">Profit will be shared by shares. Every shareholder gets the same amount per share.</p>
+<label>Total Profit to Distribute (LSL) *</label><input id="profitInput" type="number" value="10000" oninput="updateDistPreview()">
+<label>Distribution Date</label><input id="distDate" type="date">
+<label>Note / Year</label><input id="distNote" placeholder="e.g. 2026 Annual Dividends">
+<div id="distPreview" style="background:#0f172a;padding:14px;border-radius:10px;font-size:13px;line-height:1.8;margin-top:12px"></div>
+<div style="max-height:200px;overflow-y:auto;margin-top:10px" id="distPreviewList"></div>
+<div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn-green" style="flex:1" onclick="confirmDistribute()">✅ Confirm & Distribute</button><button class="btn" style="flex:1" onclick="closeDist()">Cancel</button></div>
+</div></div>
+
+<div id="viewModal" class="modal"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center"><h3 id="viewTitle">Distribution</h3><span style="cursor:pointer;font-size:20px" onclick="closeView()">×</span></div><div id="viewBody" style="margin-top:12px"></div><button class="btn" style="margin-top:12px;width:100%" onclick="closeView()">Close</button></div></div>
+
+<script>
+function toggleMenu(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); }
+if(localStorage.getItem('pe_role')!=='admin'){ location.href='/index.html'; }
+let members=[];
+function fmt(n){ return 'LSL '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function cleanName(v){ if(!v) return ''; let s=String(typeof v==='string'?v:(v.name||v.fullName||'')); if(s.includes('[object')||s.includes('HTMLParagraph')) return ''; return s; }
+function getDists(){ try{ return JSON.parse(localStorage.getItem('dividendDistributions')||'[]'); }catch(e){ return []; } }
+function setDists(d){ localStorage.setItem('dividendDistributions', JSON.stringify(d)); }
+async function load(){
+  try{ let r=await fetch('/api/members'); let d=await r.json(); members=Array.isArray(d)?d:(d.members||[]); }catch(e){ members=[]; }
+  renderTop(); renderHistory(); updateBadges();
+}
+function shareCount(m){ return Number(m.shares||m.totalShares||m.shareCount||0); }
+function renderTop(){
+  let totalShares=members.reduce((s,m)=>s+shareCount(m),0);
+  let holders=members.filter(m=>shareCount(m)>0);
+  let dists=getDists();
+  let totalPaid=dists.reduce((s,d)=>s+Number(d.totalProfit||0),0);
+  document.getElementById('totalSharesOut').innerText=totalShares;
+  document.getElementById('totalSharesValue').innerText='Value: '+fmt(totalShares*2000)+' • 1 Share = LSL 2,000';
+  document.getElementById('shareholdersOut').innerText=holders.length;
+  document.getElementById('shareholdersSub').innerText='Members with at least 1 share • Total members: '+members.length;
+  document.getElementById('distCountOut').innerText=dists.length;
+  document.getElementById('distTotalOut').innerText='Total Paid: '+fmt(totalPaid);
+  document.getElementById('examplePerShare').innerText= totalShares ? fmt(10000/totalShares) : 'LSL 0';
+  document.getElementById('econProfitLabel').innerText='10,000';
+}
+function renderHistory(){
+  let dists=getDists().slice().reverse();
+  let el=document.getElementById('historyList');
+  document.getElementById('emptyHistory').style.display=dists.length?'none':'block';
+  if(!dists.length){ el.innerHTML=''; return; }
+  el.innerHTML=dists.map((d,i)=>{
+    let realIdx=getDists().length-1 - i;
+    return `<div class="history-row"><div><b>${d.note||'Dividend Distribution'}</b> <span style="color:#64748b;font-size:12px">• ${new Date(d.date).toLocaleDateString('en-GB')}</span><div style="color:#94a3b8;font-size:13px;margin-top:4px">Total: <b style="color:#22c55e">${fmt(d.totalProfit)}</b> • Per Share: <b>${fmt(d.perShare)}</b> • Members Paid: <b>${d.membersPaid}</b> • Total Shares: ${d.totalShares}</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="viewDist(${realIdx})">View Members</button><button class="btn" style="color:#ef4444" onclick="deleteDist(${realIdx})">🗑️</button></div></div>`;
+  }).join('');
+}
+function viewDist(idx){
+  let d=getDists()[idx]; if(!d) return;
+  document.getElementById('viewTitle').innerText=(d.note||'Distribution')+' — '+new Date(d.date).toLocaleDateString('en-GB');
+  let rows=(d.breakdown||[]).slice().sort((a,b)=>b.dividend-a.dividend).slice(0,50);
+  document.getElementById('viewBody').innerHTML=`<div style="color:#94a3b8;font-size:13px">Total Profit: <b style="color:#fff">${fmt(d.totalProfit)}</b> • Per Share: <b style="color:#fff">${fmt(d.perShare)}</b> • Members: ${d.membersPaid}</div><div style="max-height:300px;overflow-y:auto;margin-top:10px">${rows.map(r=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #334155;font-size:13px"><span>${r.name} (${r.memberId}) — ${r.shares} share(s)</span><b style="color:#22c55e">${fmt(r.dividend)}</b></div>`).join('')}${(d.breakdown||[]).length>50?`<div style="color:#64748b;font-size:12px;padding:8px 0">... and ${d.breakdown.length-50} more</div>`:''}</div>`;
+  document.getElementById('viewModal').style.display='grid';
+}
+function closeView(){ document.getElementById('viewModal').style.display='none'; }
+function deleteDist(idx){
+  let dists=getDists(); let d=dists[idx]; if(!d) return;
+  if(!confirm('Delete this distribution?\n\n'+fmt(d.totalProfit)+' — '+new Date(d.date).toLocaleDateString('en-GB')+'\n\nThis does NOT remove the dividend transactions already added to Savings. Delete only the record.')) return;
+  dists.splice(idx,1); setDists(dists); renderTop(); renderHistory(); alert('Deleted');
+}
+function openDistribute(){
+  let totalShares=members.reduce((s,m)=>s+shareCount(m),0);
+  if(!totalShares) return alert('No shares yet. Buy shares first in Members / Savings.');
+  document.getElementById('distDate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('distModal').style.display='grid';
+  updateDistPreview();
+}
+function closeDist(){ document.getElementById('distModal').style.display='none'; }
+function updateDistPreview(){
+  let profit=Number(document.getElementById('profitInput').value||0);
+  let totalShares=members.reduce((s,m)=>s+shareCount(m),0);
+  let perShare= totalShares ? profit/totalShares : 0;
+  document.getElementById('distPreview').innerHTML=`Total Profit: <b>${fmt(profit)}</b><br>Total Shares: <b>${totalShares}</b><br>Per Share: <b style="color:#22c55e">${fmt(perShare)}</b><br>Shareholders: <b>${members.filter(m=>shareCount(m)>0).length}</b><br><span style="color:#94a3b8">Example: Member with 1 share gets ${fmt(perShare)} • 2 shares gets ${fmt(perShare*2)} • 5 shares gets ${fmt(perShare*5)}</span>`;
+  let top=[...members].filter(m=>shareCount(m)>0).sort((a,b)=>shareCount(b)-shareCount(a)).slice(0,5);
+  document.getElementById('distPreviewList').innerHTML=top.map(m=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #334155;font-size:13px"><span>${cleanName(m.name||m.fullName)||('Member '+(m.member_no||m.id))} — ${shareCount(m)} share(s)</span><b style="color:#22c55e">${fmt(shareCount(m)*perShare)}</b></div>`).join('');
+}
+async function confirmDistribute(){
+  let profit=Number(document.getElementById('profitInput').value||0);
+  let date=document.getElementById('distDate').value || new Date().toISOString().slice(0,10);
+  let note=document.getElementById('distNote').value.trim() || (new Date(date).getFullYear()+' Annual Dividends');
+  if(!profit || profit<=0) return alert('Enter Total Profit > 0');
+  let totalShares=members.reduce((s,m)=>s+shareCount(m),0);
+  if(!totalShares) return alert('No shares');
+  let perShare=profit/totalShares;
+  let holders=members.filter(m=>shareCount(m)>0);
+  if(!confirm('Distribute '+fmt(profit)+' to '+holders.length+' shareholders?\n\nPer Share: '+fmt(perShare)+'\nTotal Shares: '+totalShares+'\n\nThis will add a Dividend transaction to each member\'s Savings.')) return;
+  let breakdown=[];
+  let ok=0;
+  for(let m of holders){
+    let shares=shareCount(m);
+    let div=Number((shares*perShare).toFixed(2));
+    let mid=String(m.member_no||m.id);
+    breakdown.push({memberId:mid, name:cleanName(m.name||m.fullName)||('Member '+mid), shares, dividend:div});
+    try{
+      let r=await fetch('/api/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId:mid, member_no:mid, type:'dividend', amount:div, desc:'Dividend - '+note+' - '+shares+' share(s) × '+fmt(perShare), date:new Date(date).toISOString()})});
+      if(r.ok) ok++;
+    }catch(e){}
+  }
+  let dists=getDists();
+  dists.push({date:new Date(date).toISOString(), note, totalProfit:profit, perShare, totalShares, membersPaid:ok, breakdown});
+  setDists(dists);
+  closeDist(); renderTop(); renderHistory();
+  alert('✅ Dividends Distributed!\n\nTotal: '+fmt(profit)+'\nPer Share: '+fmt(perShare)+'\nMembers Paid: '+ok+' / '+holders.length);
+}
+function showEconomic(){
+  let box=document.getElementById('economicBox');
+  box.style.display= box.style.display==='none' ? 'block' : 'none';
+  if(box.style.display==='block') renderEconomic();
+}
+function renderEconomic(){
+  let q=(document.getElementById('econSearch').value||'').toLowerCase();
+  let sort=document.getElementById('econSort').value;
+  let totalShares=members.reduce((s,m)=>s+shareCount(m),0);
+  let profit=10000; let perShare= totalShares ? profit/totalShares : 0;
+  let list=members.filter(m=>shareCount(m)>0);
+  if(q) list=list.filter(m=> (cleanName(m.name||m.fullName)||'').toLowerCase().includes(q) || String(m.member_no||m.id).toLowerCase().includes(q));
+  if(sort==='shares-desc') list.sort((a,b)=>shareCount(b)-shareCount(a));
+  else if(sort==='shares-asc') list.sort((a,b)=>shareCount(a)-shareCount(b));
+  else list.sort((a,b)=> (cleanName(a.name||a.fullName)||'').localeCompare(cleanName(b.name||b.fullName)||''));
+  document.getElementById('economicBody').innerHTML=list.map((m,i)=>{
+    let shares=shareCount(m); let pct= totalShares ? (shares/totalShares*100) : 0;
+    let mid=m.member_no||m.id;
+    return `<tr><td>${i+1}</td><td><b>${cleanName(m.name||m.fullName)||('Member '+mid)}</b><div style="color:#64748b;font-size:12px">${mid}</div></td><td>${shares}</td><td>${fmt(shares*2000)}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:#0f172a;height:8px;border-radius:10px;overflow:hidden"><div style="width:${Math.min(100,pct)}%;background:#22c55e;height:100%"></div></div><span>${pct.toFixed(2)}%</span></div></td><td style="color:#22c55e;font-weight:700">${fmt(shares*perShare)}</td></tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:#94a3b8">No shareholders yet</td></tr>';
+}
+function updateBadges(){
+  try{
+    let loans=JSON.parse(localStorage.getItem('pendingLoans')||'[]').filter(x=>x.status==='pending').length;
+    let late=JSON.parse(localStorage.getItem('latePayments')||'[]').filter(x=>x.status==='pending').length;
+    let total=loans+late;
+    let ml=document.getElementById('menuLoansBadge'); if(ml){ ml.style.display=total?'inline-block':'none'; ml.innerText=total; }
+    let bell=document.getElementById('topBellCount'); if(bell){ bell.style.display=total?'block':'none'; bell.innerText=total; }
+    let sav=JSON.parse(localStorage.getItem('pendingSavings')||'[]').filter(x=>x.status==='pending').length;
+    let ms=document.getElementById('menuSavingsBadge'); if(ms){ ms.style.display=sav?'inline-block':'none'; ms.innerText=sav; }
+  }catch(e){}
+}
+load();
+</script>
+</body></html>
