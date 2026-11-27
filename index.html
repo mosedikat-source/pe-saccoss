@@ -6,7 +6,7 @@
 <title>P. E. SACCOS LTD - Log in</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
-body{background:#0a0e1a;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px;color:white}
+body{background:#0a0e1a;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:center;padding:16px;color:white}
 .card{background:#111827;border:1px solid #1e293b;width:100%;max-width:380px;border-radius:20px;padding:32px 26px;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
 .logo-wrap{display:flex;justify-content:center;margin-bottom:16px}
 .logo{width:64px;height:64px}
@@ -14,7 +14,7 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
 .sub{text-align:center;color:#64748b;font-size:13px;margin:6px 0 28px}
 .label{font-size:13px;color:#e2e8f0;margin:16px 0 8px;display:block;font-weight:500}
 .input-box{position:relative}
-.input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #1f2937;background:#0b1120;color:white;font-size:14px;outline:none}
+.input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #1f2937;background:#0b1120;color:white;font-size:16px;outline:none}
 .input::placeholder{color:#475569}
 .input:focus{border-color:#22c55e}
 .eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#475569;font-size:18px}
@@ -23,11 +23,18 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
 .link{color:#2fbd6b;font-size:13px;text-align:center;display:block;margin-top:16px;text-decoration:none;cursor:pointer}
 .link.bold{font-weight:600;margin-top:22px}
 #dashboard{display:none;position:fixed;inset:0;background:#0a0e1a;padding:20px;overflow:auto;z-index:100}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+@media(max-width:520px){
+  body{padding:12px;align-items:flex-start;padding-top:24px}
+  .card{padding:24px 18px;border-radius:16px}
+  h1{font-size:18px}
+  .dash-grid{grid-template-columns:1fr}
+  #dashboard{padding:14px}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE - YOUR EXACT DESIGN -->
 <div id="loginPage" class="card">
   <div class="logo-wrap">
     <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -43,11 +50,11 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
   <div class="sub">Log in to your account</div>
 
   <label class="label">Email</label>
-  <input id="email" class="input" placeholder="you@example.com">
+  <input id="email" class="input" placeholder="you@example.com" autocomplete="email">
 
   <label class="label">Password</label>
   <div class="input-box">
-    <input id="password" class="input" type="password" placeholder="••••••••">
+    <input id="password" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
     <span class="eye" onclick="togglePwd()">👁</span>
   </div>
 
@@ -58,10 +65,9 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
   <p id="loginMsg" style="color:#fca5a5;font-size:13px;text-align:center;margin-top:12px"></p>
 </div>
 
-<!-- DASHBOARD AFTER LOGIN - KEPT AS YOU HAD IT -->
 <div id="dashboard">
   <div style="max-width:1000px;margin:0 auto">
-    <div style="display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <h2>Dashboard - <span id="membersHeaderTitle">0 registered members</span></h2>
       <button onclick="location.reload()" style="background:#ef4444;border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer">Logout</button>
     </div>
@@ -69,7 +75,7 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
       <h3 style="color:#fbbf24">⏳ Pending Approvals (<span id="pendingCount">0</span>)</h3>
       <div id="pendingList"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+    <div class="dash-grid">
       <div style="background:#111827;border:1px solid #1e293b;padding:18px;border-radius:12px;text-align:center"><div style="color:#64748b;font-size:12px">Total Members</div><div id="totalMembers" style="font-size:32px;font-weight:800">0</div></div>
       <div style="background:#111827;border:1px solid #1e293b;padding:18px;border-radius:12px;text-align:center"><div style="color:#64748b;font-size:12px">Pending</div><div id="pendingMembersCount" style="font-size:32px;font-weight:800;color:#fbbf24">0</div></div>
     </div>
@@ -83,44 +89,53 @@ h1{text-align:center;font-size:20px;font-weight:800;letter-spacing:0.5px}
 <script>
 function togglePwd(){ const i=document.getElementById('password'); i.type=i.type==='password'?'text':'password'; }
 function getPwds(){ try{return JSON.parse(localStorage.getItem('pe_member_pwds')||'{}')}catch(e){return {}} }
-
+function saveMemberLogin(member, email){
+  const memberId = member.member_no || member.memberNo || member.id || '';
+  const name = member.name || member.fullName || '';
+  const phone = member.phone || member.phoneNumber || '';
+  localStorage.setItem('sacco_logged_in','true');
+  localStorage.setItem('pe_role','member');
+  localStorage.setItem('pe_memberId', memberId);
+  localStorage.setItem('pe_memberEmail', email);
+  localStorage.setItem('pe_user_email', email);
+  localStorage.setItem('user_email', email);
+  localStorage.setItem('email', email);
+  localStorage.setItem('pe_user', JSON.stringify({email: email, username: email, name: name, memberId: memberId, phone: phone}));
+  localStorage.setItem('currentUser', JSON.stringify({email: email, username: email, name: name, memberId: memberId, phone: phone}));
+  localStorage.setItem('pe_member_link', JSON.stringify({memberId: memberId, email: email, name: name}));
+}
+function saveAdminLogin(email){
+  localStorage.setItem('sacco_logged_in','true');
+  localStorage.setItem('pe_role','admin');
+  localStorage.setItem('pe_admin_email', email);
+  localStorage.setItem('pe_user_email', email);
+  localStorage.setItem('pe_user', JSON.stringify({email: email, username: email, role: 'admin'}));
+}
 async function login(){
   const e=document.getElementById('email').value.trim().toLowerCase();
   const p=document.getElementById('password').value.trim();
   const msg=document.getElementById('loginMsg');
   msg.innerText='';
   if(!e||!p) return alert('Enter email + password');
-
-  // --- ADMIN MODE ---
   if(e==='mosedikat@gmail.com' && p==='admin123'){
-    localStorage.setItem('sacco_logged_in','true');
-    localStorage.setItem('pe_role','admin');
-    localStorage.setItem('pe_admin_email',e);
+    saveAdminLogin(e);
     location.href='/dashboard.html'; return;
   }
-  // Demo admin you had
   if(e==='you@example.com'){
-    localStorage.setItem('sacco_logged_in','true');
-    localStorage.setItem('pe_role','admin');
+    saveAdminLogin(e);
     location.href='/dashboard.html'; return;
   }
-
-  // --- MEMBER MODE : Personal Email + Password ---
   try{
     const r=await fetch('/api/members'); const d=await r.json();
-    const list=d.members||d||[];
+    const list=Array.isArray(d) ? d : (d.members||d.data||[]);
     const m=list.find(x=>(x.email||'').toLowerCase()===e);
     if(!m){ msg.innerText='❌ No member with that email. Sign up first or contact admin.'; return; }
     const pwds=getPwds();
     const ok = (pwds[e] && pwds[e]===p) || (m.password && m.password===p);
     if(ok){
-      localStorage.setItem('pe_role','member');
-      localStorage.setItem('pe_memberId', m.member_no||m.id);
-      localStorage.setItem('pe_memberEmail', e);
-      localStorage.setItem('sacco_logged_in','true');
+      saveMemberLogin(m, e);
       location.href='/member-portal.html'; return;
     }
-    // Member exists but no password set yet
     if(!pwds[e] && !m.password){
       msg.innerText='First time? Go to Sign up and create your password with your Member Number + this email.';
       return;
@@ -130,26 +145,27 @@ async function login(){
     msg.innerText='Server not running - run node server.js';
   }
 }
-
 async function updateCounts(){
   try{
     const r1=await fetch('/api/members'); const m=await r1.json();
-    document.getElementById('totalMembers').innerText=m.length;
-    document.getElementById('membersHeaderTitle').innerText=m.length+' registered members';
+    const list=Array.isArray(m)?m:(m.members||[]);
+    document.getElementById('totalMembers').innerText=list.length;
+    document.getElementById('membersHeaderTitle').innerText=list.length+' registered members';
     const r2=await fetch('/api/pending-members'); const p=await r2.json();
-    document.getElementById('pendingMembersCount').innerText=p.length;
-    document.getElementById('pendingCount').innerText=p.length;
+    const plist=Array.isArray(p)?p:(p.members||[]);
+    document.getElementById('pendingMembersCount').innerText=plist.length;
+    document.getElementById('pendingCount').innerText=plist.length;
   }catch(e){ console.log('Server not running - run node server.js'); }
 }
 async function loadMembers(){
-  try{ const r=await fetch('/api/members'); const members=await r.json();
-  document.getElementById('membersTable').innerHTML=members.map(x=>`<div style="padding:10px;border-bottom:1px solid #1e293b">${x.id} - ${x.name||x.fullName} - ${x.email}</div>`).join('')||'<div style="color:#475569">No members yet - approve pending</div>';
+  try{ const r=await fetch('/api/members'); const d=await r.json(); const members=Array.isArray(d)?d:(d.members||[]);
+  document.getElementById('membersTable').innerHTML=members.map(x=>`<div style="padding:10px;border-bottom:1px solid #1e293b">${x.member_no||x.id} - ${x.name||x.fullName} - ${x.email}</div>`).join('')||'<div style="color:#475569">No members yet - approve pending</div>';
   }catch(e){}
 }
 async function loadPending(){
   try{
-    const r=await fetch('/api/pending-members'); const list=await r.json(); const box=document.getElementById('pendingBox');
-    if(list.length>0){ box.style.display='block'; document.getElementById('pendingList').innerHTML=list.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#111827;padding:10px;margin-top:8px;border-radius:8px"><span>${m.name||m.fullName} - ${m.email}</span><button onclick="approveMember('${m.id}')" style="background:#2fbd6b;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer">Approve</button></div>`).join(''); } else box.style.display='none';
+    const r=await fetch('/api/pending-members'); const d=await r.json(); const list=Array.isArray(d)?d:(d.members||[]); const box=document.getElementById('pendingBox');
+    if(list.length>0){ box.style.display='block'; document.getElementById('pendingList').innerHTML=list.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;background:#111827;padding:10px;margin-top:8px;border-radius:8px;flex-wrap:wrap;gap:8px"><span>${m.name||m.fullName} - ${m.email}</span><button onclick="approveMember('${m.id}')" style="background:#2fbd6b;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer">Approve</button></div>`).join(''); } else box.style.display='none';
   }catch(e){}
 }
 async function approveMember(id){ if(!confirm('Approve this member?'))return; await fetch('/api/approve-member',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); updateCounts(); loadPending(); loadMembers(); }
